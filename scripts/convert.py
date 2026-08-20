@@ -1,0 +1,744 @@
+import argparse
+import importlib.util
+import os
+import re
+import fnmatch
+import subprocess
+
+from pypdf import PdfWriter
+
+# ============================================================
+# Ordered List Continuation Fix
+# ============================================================
+
+# Delimiters of AsciiDoc blocks that pandoc nests around list content.
+# ('----' listing blocks are tracked separately because they never nest.)
+_NESTING_DELIMS = ('____', '====')
+
+
+def _advance_block_state(line, blocks, in_code):
+    """
+    Fold one AsciiDoc line into the surrounding block state.
+
+    ``blocks`` is a stack of currently open ``____``/``====`` delimiters and is
+    mutated in place; the (possibly toggled) ``in_code`` flag is returned.
+    """
+    stripped = line.strip()
+    if stripped == '----':
+        return not in_code
+    if not in_code and stripped in _NESTING_DELIMS:
+        if blocks and blocks[-1] == stripped:
+            blocks.pop()
+        else:
+            blocks.append(stripped)
+    return in_code
+
+
+def _closes_enclosing(line, blocks, in_code, depth):
+    """
+    True if ``line`` closes a block that was already open at ``depth``.
+
+    Used to stop consuming a list item at the end of the quote/admonition
+    block that contains it, so the generated ``--`` open block is always
+    closed inside its parent.
+    """
+    stripped = line.strip()
+    return (
+        not in_code
+        and depth > 0
+        and stripped in _NESTING_DELIMS
+        and len(blocks) == depth
+        and blocks[-1] == stripped
+    )
+
+
+def fix_ordered_list_continuations(content):
+    """
+    Fix ordered list items that use multiple '+' continuations.
+
+    Pandoc converts RST enumerated lists into AsciiDoc using '+' list
+    continuation markers.  When a list item contains nested bullet lists,
+    code blocks, or admonition blocks, the '+' chain breaks and the '+'
+    characters appear literally in the PDF output.
+
+    This function wraps continuation content in open blocks (-- ... --)
+    so that all content stays attached to the list item without needing
+    individual '+' markers.  The enclosing quote/admonition blocks are
+    tracked so the closing '--' is never emitted outside its parent block,
+    which asciidoctor would report as an unterminated block.
+    """
+    lines = content.split('\n')
+    result = []
+    i = 0
+
+    open_blocks = []
+    in_code = False
+
+    while i < len(lines):
+        line = lines[i]
+
+        # Match an ordered list item: `. text`, `.. text`, etc.
+        if re.match(r'^\.{1,5}\s+\S', line):
+            result.append(line)
+            i += 1
+
+            # Check whether the next line is a '+' continuation
+            if i < len(lines) and lines[i].strip() == '+':
+                depth = len(open_blocks)
+
+                # Look ahead to count '+' lines until the next list item,
+                # section header, or the end of the enclosing block
+                # (outside code / admonition blocks).
+                j = i
+                plus_count = 0
+                probe_blocks = list(open_blocks)
+                probe_code = in_code
+                while j < len(lines):
+                    stripped = lines[j].strip()
+                    if _closes_enclosing(lines[j], probe_blocks, probe_code, depth):
+                        break
+                    if not probe_code and len(probe_blocks) == depth:
+                        if re.match(r'^\.{1,5}\s+\S', lines[j]) or \
+                           re.match(r'^={1,6}\s+\S', lines[j]):
+                            break
+                        if stripped == '+':
+                            plus_count += 1
+                    probe_code = _advance_block_state(lines[j], probe_blocks, probe_code)
+                    j += 1
+
+                if plus_count >= 2:
+                    # Multiple continuations -> wrap in an open block
+                    result.append('+')
+                    result.append('--')
+                    i += 1  # skip the first '+'
+
+                    while i < len(lines):
+                        stripped = lines[i].strip()
+                        at_own_level = not in_code and len(open_blocks) == depth
+
+                        # End of this list item?
+                        ends_item = _closes_enclosing(lines[i], open_blocks, in_code, depth) or (
+                            at_own_level and (
+                                re.match(r'^\.{1,5}\s+\S', lines[i]) or
+                                re.match(r'^={1,6}\s+\S', lines[i])
+                            )
+                        )
+                        if ends_item:
+                            # Strip trailing blank lines inside the block
+                            while result and result[-1].strip() == '':
+                                result.pop()
+                            result.append('--')
+                            result.append('')  # blank line before next element
+                            break
+
+                        if stripped == '+' and at_own_level:
+                            result.append('')  # replace '+' with blank line
+                        else:
+                            result.append(lines[i])
+                            in_code = _advance_block_state(lines[i], open_blocks, in_code)
+                        i += 1
+                    else:
+                        # Reached end of file - close the open block
+                        result.append('--')
+                    continue
+            continue
+
+        result.append(line)
+        in_code = _advance_block_state(line, open_blocks, in_code)
+        i += 1
+
+    return '\n'.join(result)
+
+
+# ============================================================
+# Empty Title Removal
+# ============================================================
+
+def remove_empty_titles(content):
+    """
+    Remove titles (== ... ) that have no content below them.
+    Keep a title only if it is followed by actual content (not another title or EOF).
+    """
+    lines = content.split('\n')
+    result = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i]
+
+        # Check if the line is a title (starts with =, ==, ===, etc.)
+        if re.match(r'^={1,6}\s+\S', line):
+            j = i + 1
+
+            # Skip blank lines after the title
+            while j < len(lines) and lines[j].strip() == '':
+                j += 1
+
+            # Check whether the next non-blank line is content or another title
+            if j < len(lines) and not re.match(r'^={1,6}\s+\S', lines[j]):
+                # There is content — keep the title
+                result.append(line)
+            else:
+                # No content (EOF or another title immediately after) — skip
+                print(f"  REMOVED empty title: {line.strip()}")
+                # Also skip the blank lines that followed the title
+                i = j
+                continue
+        else:
+            result.append(line)
+
+        i += 1
+
+    return '\n'.join(result)
+
+
+# ============================================================
+# Skip List Configuration
+# ============================================================
+
+def load_skip_list(skip_file="skip_list.txt"):
+    """
+    Load the list of files/folders to skip from a config file.
+
+    Supported formats:
+      - Comments (#)
+      - Folder names (e.g., chapter-03)
+      - Explicit paths (e.g., source/chapter-01/debug.rst)
+      - Wildcard patterns (e.g., **/draft_*)
+    """
+    skip_patterns = []
+
+    if not os.path.exists(skip_file):
+        print(f"INFO: No skip list file found at '{skip_file}', nothing will be skipped.")
+        return skip_patterns
+
+    with open(skip_file, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            skip_patterns.append(line)
+
+    print(f"Loaded {len(skip_patterns)} skip patterns from '{skip_file}':")
+    for p in skip_patterns:
+        print(f"  - {p}")
+
+    return skip_patterns
+
+
+def should_skip(file_path, skip_patterns):
+    """
+    Check whether *file_path* matches any of the skip patterns.
+
+    Matching strategies (tried in order):
+      1. Exact path match
+      2. Folder-name match (any path component equals the pattern)
+      3. Basename match
+      4. Wildcard/glob match on the full path
+      5. Wildcard/glob match on the basename only
+    """
+    normalized_path = os.path.normpath(file_path)
+    path_parts = normalized_path.split(os.sep)
+
+    for pattern in skip_patterns:
+        pattern = pattern.strip()
+
+        # 1. Exact path match
+        if os.path.normpath(pattern) == normalized_path:
+            return True
+
+        # 2. Folder-name match
+        #    e.g. pattern "chapter-03" matches "source/chapter-03/intro.rst"
+        if pattern in path_parts:
+            return True
+
+        # 3. Basename match
+        #    e.g. pattern "debug.rst" matches "source/chapter-01/debug.rst"
+        if os.path.basename(normalized_path) == pattern:
+            return True
+
+        # 4. Wildcard match on full path
+        #    e.g. pattern "**/draft_*" matches "source/chapter-01/draft_intro.rst"
+        if fnmatch.fnmatch(normalized_path, pattern):
+            return True
+
+        # 5. Wildcard match on filename only
+        if fnmatch.fnmatch(os.path.basename(normalized_path), pattern):
+            return True
+
+    return False
+
+
+# ============================================================
+# Toctree Parsing (with skip support)
+# ============================================================
+
+def parse_toctree(rst_file_path, skip_patterns=None, depth=0):
+    """
+    Parse an RST file, find all toctree directives, and return an ordered
+    list of (file_path, depth) tuples.
+
+    *depth* tracks the nesting level in the toctree hierarchy.  When a file
+    is skipped (content excluded), its children inherit the same depth so
+    that only top-level sections trigger page breaks in the PDF output.
+
+    Recursively descends into subfolders when a child file also contains
+    toctree directives.  Files/folders matching *skip_patterns* are excluded.
+    """
+    if skip_patterns is None:
+        skip_patterns = []
+
+    if not os.path.exists(rst_file_path):
+        print(f"WARNING: File not found: {rst_file_path}")
+        return []
+
+    base_dir = os.path.dirname(rst_file_path)
+
+    with open(rst_file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    toctree_pattern = re.compile(
+        r'\.\.\s+toctree::\s*\n'
+        r'((?:[ \t]+\S.*\n)*)'
+        r'((?:[ \t]*\n)*)'
+        r'((?:[ \t]+\S.*\n?)*)',
+        re.MULTILINE
+    )
+
+    ordered_files = []
+
+    for match in toctree_pattern.finditer(content):
+        entries_block = match.group(3)
+
+        for line in entries_block.strip().splitlines():
+            entry = line.strip()
+            if not entry or entry.startswith(":") or entry.startswith(".."):
+                continue
+
+            # Handle entries with an explicit title: "Custom Title <path/to/file>"
+            title_path_match = re.match(r'.*<(.+)>', entry)
+            if title_path_match:
+                entry = title_path_match.group(1).strip()
+
+            # Resolve the file path
+            entry_with_ext = entry if entry.endswith(".rst") else entry + ".rst"
+            full_path = os.path.normpath(os.path.join(base_dir, entry_with_ext))
+
+            # --- Skip checks ---
+            # When a file is skipped, we still recurse into its toctree
+            # so that child documents are included in the output.
+            # Children inherit the same depth (not depth+1) since the
+            # skipped file's content is not emitted.
+            if should_skip(full_path, skip_patterns):
+                print(f"  SKIPPED (content only): {full_path}")
+                if os.path.exists(full_path):
+                    ordered_files.extend(
+                        parse_toctree(full_path, skip_patterns, depth))
+                continue
+
+            if should_skip(entry, skip_patterns):
+                print(f"  SKIPPED (by entry name, content only): {entry}")
+                if os.path.exists(full_path):
+                    ordered_files.extend(
+                        parse_toctree(full_path, skip_patterns, depth))
+                continue
+            # -------------------
+
+            if os.path.exists(full_path):
+                ordered_files.append((full_path, depth))
+                ordered_files.extend(
+                    parse_toctree(full_path, skip_patterns, depth + 1))
+            else:
+                # Try treating the entry as a folder with an index.rst inside
+                folder_index = os.path.normpath(
+                    os.path.join(base_dir, entry, "index.rst")
+                )
+
+                if should_skip(folder_index, skip_patterns):
+                    print(f"  SKIPPED (folder, content only): {folder_index}")
+                    if os.path.exists(folder_index):
+                        ordered_files.extend(
+                            parse_toctree(folder_index, skip_patterns, depth))
+                    continue
+
+                if os.path.exists(folder_index):
+                    ordered_files.append((folder_index, depth))
+                    ordered_files.extend(
+                        parse_toctree(folder_index, skip_patterns, depth + 1))
+                else:
+                    print(f"WARNING: Cannot resolve toctree entry: {entry}")
+                    print(f"  Tried: {full_path}")
+                    print(f"  Tried: {folder_index}")
+
+    return ordered_files
+
+
+# ============================================================
+# RST Helper Utilities
+# ============================================================
+
+def remove_directive_blocks(content, directive):
+    """Remove all RST directive blocks of the given type (e.g. 'tip', 'note')."""
+    pattern = re.compile(
+        r'\.\.\s+' + re.escape(directive) + r'::.*?(?=\n\S|\n\n\S|\Z)',
+        re.DOTALL
+    )
+    return pattern.sub('', content)
+
+
+def remove_toctree_directives(content):
+    """Strip all toctree directives from RST content."""
+    pattern = re.compile(
+        r'\.\.\s+toctree::.*?(?=\n\S|\n\n\S|\Z)',
+        re.DOTALL
+    )
+    return pattern.sub('', content)
+
+
+def get_chapter_from_path(file_path):
+    """Extract the chapter folder name (e.g. 'chapter-01') from a file path."""
+    parts = os.path.normpath(file_path).split(os.sep)
+    for part in parts:
+        if part.startswith("chapter-"):
+            return part
+    return None
+
+
+# RST heading underline characters in order of precedence (highest to lowest).
+RST_HEADING_CHARS = ['=', '-', '~', '^', '"']
+
+
+def demote_rst_headings(content, levels):
+    """
+    Demote all RST headings in *content* by *levels* steps.
+
+    RST headings are detected as a text line followed by an underline of the
+    same length using one of the characters in RST_HEADING_CHARS.  Each
+    heading's underline character is shifted down in the precedence list.
+    """
+    if levels <= 0:
+        return content
+
+    lines = content.split('\n')
+    result = []
+    i = 0
+
+    while i < len(lines):
+        # Check if this line is a heading: non-empty text line followed by
+        # an underline of the same length using a heading character.
+        if (i + 1 < len(lines)
+                and lines[i].strip()
+                and not lines[i].startswith(' ')
+                and not lines[i].startswith('\t')
+                and not lines[i].startswith('..')):
+            underline = lines[i + 1]
+            if (len(underline) >= len(lines[i].strip())
+                    and underline.strip()
+                    and len(set(underline.strip())) == 1
+                    and underline.strip()[0] in RST_HEADING_CHARS):
+                char = underline.strip()[0]
+                idx = RST_HEADING_CHARS.index(char)
+                new_idx = min(idx + levels, len(RST_HEADING_CHARS) - 1)
+                new_char = RST_HEADING_CHARS[new_idx]
+                result.append(lines[i])
+                result.append(new_char * len(underline))
+                i += 2
+                continue
+
+        result.append(lines[i])
+        i += 1
+
+    return '\n'.join(result)
+
+
+# ============================================================
+# Dump / Combine RST Files (with skip support)
+# ============================================================
+
+def dump_rst_files(base_folder, output_file="combined.rst", skip_patterns=None):
+    """
+    Combine RST files in toctree order (recursing into subfolders) into a
+    single output file.  Files/folders matching *skip_patterns* are excluded.
+    """
+    if skip_patterns is None:
+        skip_patterns = []
+
+    root_index = os.path.join(base_folder, "index.rst")
+
+    if not os.path.exists(root_index):
+        print(f"ERROR: Root index not found: {root_index}")
+        return
+
+    ordered_files = parse_toctree(root_index, skip_patterns)
+
+    print("=" * 60)
+    print("Resolved toctree order (after skip filtering):")
+    print("=" * 60)
+    for i, (f, d) in enumerate(ordered_files, 1):
+        print(f"  {i:3d}. [depth={d}] {f}")
+    print("=" * 60)
+
+    if skip_patterns:
+        print(f"\nSkip patterns applied: {skip_patterns}\n")
+
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
+    current_chapter = None
+
+    with open(output_file, "a", encoding="utf-8") as outfile:
+        # 1. Write the root index.rst first (without tip blocks and toctrees)
+        if not should_skip(root_index, skip_patterns):
+            with open(root_index, "r", encoding="utf-8") as f:
+                content = f.read()
+                content = remove_toctree_directives(content)
+                content = remove_directive_blocks(content, "tip")
+                outfile.write(content + "\n\n")
+        else:
+            print(f"  SKIPPED (content only): {root_index}")
+
+        # 2. Write each file in toctree order
+        for rst_path, depth in ordered_files:
+            chapter = get_chapter_from_path(rst_path)
+            if chapter and chapter != current_chapter:
+                current_chapter = chapter
+
+            # Page break only before top-level sections (depth 0)
+            if depth == 0:
+                outfile.write("\n<<<\n\n")
+
+            with open(rst_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                content = remove_toctree_directives(content)
+                outfile.write(content + "\n\n")
+
+    print(f"RST files have been combined into {output_file}")
+    print(f"Total files: {len(ordered_files) + 1} (including root index)")
+
+
+# ============================================================
+# RST to AsciiDoc Conversion
+# ============================================================
+
+def load_rst_prolog(conf_path="source/conf.py"):
+    """
+    Return the ``rst_prolog`` substitution definitions from the Sphinx config.
+
+    Sphinx injects these at the top of every source file, so substitutions such
+    as ``|kernel_version|`` are never defined in the .rst files themselves.
+    Pandoc only sees the combined file, so without the prolog it drops every
+    substitution reference and the text silently disappears from the PDF.
+    """
+    try:
+        spec = importlib.util.spec_from_file_location("sphinx_conf", conf_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    except Exception as exc:  # pragma: no cover - config problems are Sphinx's job
+        print(f"  WARNING: could not load {conf_path} ({exc}); "
+              f"substitutions will not be expanded")
+        return ""
+
+    return getattr(module, "rst_prolog", "") or ""
+
+
+def rst_to_adoc(rst_file):
+    """
+    Convert a (combined) RST file to AsciiDoc via Pandoc, then apply
+    post-processing fixes (image paths, admonition titles, attributes, etc.).
+    """
+    with open(rst_file, "r", encoding="utf-8") as file:
+        rst_content = file.read()
+
+    # Sphinx applies rst_prolog to every file; Pandoc needs it prepended once
+    # to the combined document so |substitutions| resolve instead of vanishing.
+    prolog = load_rst_prolog()
+    if prolog:
+        rst_content = prolog + "\n" + rst_content
+
+    # Pre-process cross-references so Pandoc can handle them.
+    #
+    # The character classes deliberately exclude backticks and angle brackets so
+    # a match can never extend past the role's own closing backtick.  Without
+    # that restriction a target-less ``:ref:`name``` keeps matching until the
+    # next ``<...>`` anywhere in the document - swallowing whole paragraphs,
+    # tables and code blocks, which then leak into the AsciiDoc as raw RST and
+    # break the PDF build.  Newlines stay allowed so line-wrapped roles work.
+
+    # Labelled form: :ref:`Some label <target>` -> <<target,Some label>>
+    rst_content = re.sub(
+        r':ref:`([^`<>]+?)\s*<([^`<>]+?)>`',
+        r'<<\2,\1>>',
+        rst_content,
+    )
+
+    # Bare form: :ref:`target` -> <<target>>
+    rst_content = re.sub(r':ref:`([^`<>]+?)`', r'<<\1>>', rst_content)
+
+    # Normalise non-standard admonition types to the ones Pandoc understands
+    rst_content = re.sub(r'^[ \t]*\.\.\s+attention::', '.. warning::', rst_content, flags=re.MULTILINE)
+    rst_content = re.sub(r'^[ \t]*\.\.\s+danger::',    '.. warning::', rst_content, flags=re.MULTILINE)
+    rst_content = re.sub(r'^[ \t]*\.\.\s+error::',     '.. warning::', rst_content, flags=re.MULTILINE)
+    rst_content = re.sub(r'^[ \t]*\.\.\s+hint::',      '.. tip::',     rst_content, flags=re.MULTILINE)
+    rst_content = re.sub(r'^[ \t]*\.\.\s+seealso::',   '.. note::',    rst_content, flags=re.MULTILINE)
+
+    # Write a temporary pre-processed RST file for Pandoc
+    temp_rst = rst_file.replace(".rst", "_processed.rst")
+    with open(temp_rst, "w", encoding="utf-8") as file:
+        file.write(rst_content)
+
+    adoc_file = rst_file.replace(".rst", ".adoc")
+    subprocess.run([
+        "pandoc", "-f", "rst", "-t", "asciidoc",
+        "--wrap=none", temp_rst, "-o", adoc_file,
+    ])
+
+    with open(adoc_file, "r", encoding="utf-8") as file:
+        content = file.read()
+
+    # Prepend AsciiDoc document header / attributes
+    header = """\
+:toc: macro
+:sectnums:
+:toclevels: 3
+:sectnumlevels: 5
+:toc-title: Contents
+:source-highlighter: highlight.js
+:highlightjs-theme: github
+:experimental:
+:pp: {plus}{plus}
+
+toc::[]
+
+<<<
+"""
+    content = header + "\n" + content
+
+    # Remove section titles that have no content beneath them
+    content = remove_empty_titles(content)
+
+    # Fix ordered list '+' continuations that break with nested content
+    content = fix_ordered_list_continuations(content)
+
+    # Fix image paths: ../images/, ../../images/, and ../../../images/ -> source/images/
+    content = re.sub(
+        r'image::(?:\.\./){1,3}images/',
+        'image::source/images/',
+        content,
+    )
+
+    # Remove auto-generated admonition caption lines (e.g. ".Tip", ".Warning")
+    content = re.sub(
+        r'(\[(?:TIP|NOTE|WARNING|IMPORTANT|CAUTION)\])\n'
+        r'\.(?:Tip|Note|Warning|Important|Caution|Attention|Danger|Error|Hint|See also)\n'
+        r'(====)',
+        r'\1\n\2',
+        content,
+    )
+
+    # Convert {:.nonum .discrete} style attributes to AsciiDoc [discrete, nonum]
+    attr_pattern = re.compile(
+        r"^(=+)(\s+)(.*?)(\s*){:\s*((?:\.(?:nonum|discrete)\s*)+)}$",
+        flags=re.MULTILINE,
+    )
+
+    def replace_attr(match):
+        level = match.group(1)
+        spaces = match.group(2)
+        title = match.group(3).strip()
+        attrs = match.group(5).strip().split()
+        flags = [a.strip(".") for a in attrs if a in {".nonum", ".discrete"}]
+        return f"[{', '.join(flags)}]\n{level}{spaces}{title}"
+
+    content = attr_pattern.sub(replace_attr, content)
+
+    with open(adoc_file, "w", encoding="utf-8") as file:
+        file.write(content)
+
+
+# ============================================================
+# High-level Pipeline
+# ============================================================
+
+def convert_rst(args):
+    skip_patterns = load_skip_list("scripts/skip_list.txt")
+
+    if hasattr(args, 'skip') and args.skip:
+        skip_patterns.extend(args.skip)
+        print(f"Additional skip patterns from CLI: {args.skip}")
+
+    combined_rst_file = "combined_manual.rst"
+    dump_rst_files("source", combined_rst_file, skip_patterns)
+    rst_to_adoc(combined_rst_file)
+
+    # Build environment with overrides
+    env = os.environ.copy()
+    if args.release_version:
+        env["PACKAGE_VER"] = args.release_version
+    if args.rev_date:
+        env["REV_DATE"] = args.rev_date
+
+    subprocess.run(
+        [
+            "bash",
+            "scripts/convert_pdf.sh",
+            combined_rst_file.replace(".rst", ".adoc"),
+            combined_rst_file.replace(".rst", ".pdf"),
+        ],
+        env=env,
+    )
+
+
+def merge_pdfs(output_path):
+    """Merge cover, intro, and main-body PDFs into a single output file."""
+    merger = PdfWriter()
+
+    pdf_list = [
+        "docs/configs/Cover.pdf",
+        "docs/configs/Intro.pdf",
+        "combined_manual.pdf",
+    ]
+
+    for pdf in pdf_list:
+        merger.append(pdf)
+
+    os.makedirs("output", exist_ok=True)
+    merger.write(os.path.join("output", output_path))
+    merger.close()
+
+    print("User Manual PDF merged successfully!")
+
+
+# ============================================================
+# Entry Point
+# ============================================================
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Convert RST files to PDF and run pdflatex."
+    )
+    parser.add_argument(
+        "--output_filename",
+        help="The filename for the PDF output, e.g., report.pdf",
+    )
+    parser.add_argument(
+        "--release_version",
+        type=str,
+        default=None,
+        help="Package version string, e.g., 2.0 (overrides PACKAGE_VER in shell)",
+    )
+    parser.add_argument(
+        "--rev_date",
+        type=str,
+        default=None,
+        help="Revision date string, e.g., Jun.15.25 (overrides REV_DATE in shell)",
+    )
+    parser.add_argument(
+        "--skip",
+        nargs="*",
+        default=[],
+        help="List of files/folders to skip. E.g., --skip chapter-03 debug.rst",
+    )
+
+    args = parser.parse_args()
+    convert_rst(args)
+    merge_pdfs(args.output_filename)

@@ -1,0 +1,70 @@
+.wy-nav-content {
+    max-width: 64rem;
+}
+
+.version-switcher {
+    margin: 0.75rem 0 1rem;
+    text-align: center;
+}
+
+.version-switcher__select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #2980b9;
+    border: none !important;
+    border-radius: 4px;
+    box-shadow: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='hsla(0%2C0%25%2C100%25%2C.65)' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.45rem center;
+    background-repeat: no-repeat;
+    background-size: 0.62rem 0.4rem;
+    color: hsla(0,0%,100%,.3);
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    padding: 0.22rem 1.2rem 0.22rem 0.4rem;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    width: 40%;
+    min-width: 7.5rem;
+}
+
+.version-switcher__select:hover {
+    background-color: #1f6ea3;
+}
+
+.version-switcher__select:focus {
+    background-color: #1f6ea3;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.version-switcher__select option {
+    background-color: #ffffff;
+    color: #111111;
+    text-align: center;
+}
+
+/* The RTD theme sets `white-space: nowrap` on every table cell, so any table
+   with prose or long literals overflows and has to be scrolled sideways.
+   Let cells wrap and keep tables inside the page width instead. */
+.wy-table-responsive table td,
+.wy-table-responsive table th,
+.rst-content table.docutils td,
+.rst-content table.docutils th {
+    white-space: normal;
+}
+
+/* Long inline literals (env-var assignments, paths, commands) are a single
+   unbreakable word, so they still force the column wide. Allow them to break. */
+.wy-table-responsive table td code,
+.wy-table-responsive table th code,
+.rst-content table.docutils td code,
+.rst-content table.docutils th code,
+.rst-content table.docutils td .literal,
+.rst-content table.docutils th .literal {
+    white-space: normal;
+    overflow-wrap: break-word;
+}
