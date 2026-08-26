@@ -29,24 +29,26 @@ jobs:
     if: github.actor != 'github-actions[bot]' && (github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     env:
-      PDF_FILENAME: WS125_Robotic_Development_Kit_User_Manual.pdf
+      PDF_FILENAME: R-Car_V4H_Sparrow_Hawk_User_Manual.pdf
       DOCS_VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '1.0' }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           lfs: true
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
+        with:
+          enablement: true
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build docs image with cache
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/image/Dockerfile
@@ -127,7 +129,7 @@ jobs:
           fi
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
@@ -142,4 +144,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
