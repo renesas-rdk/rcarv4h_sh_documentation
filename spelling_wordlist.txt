@@ -13,10 +13,12 @@ bmaptool
 bootable
 bootloader
 busybox
+cairo
 ChB
 chroot
 CMake
 cmemdrv
+codecs
 colcon
 config
 convolutional
@@ -59,6 +61,7 @@ mIoU
 mux
 Nano
 natively
+netplan
 Netplan
 Olimex
 parallelize
