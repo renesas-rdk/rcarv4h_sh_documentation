@@ -110,10 +110,10 @@ out-of-tree modules already installed on the board must be preserved:
    the board unless both directories are excluded.
 
    If they are accidentally removed, rebuild them with ``./main_build.sh ext-modules install``,
-   restore them from a backup, or copy them from the original image of the R-Car/V4H SH.
+   restore them from a backup, or copy them from the original image of the R-Car V4H SH.
 
 Both targets also generate configuration files outside ``usr/lib/modules/``. They are already present
-on the original image of the R-Car/V4H SH, so they only need to be copied when you deploy to a
+on the original image of the R-Car V4H SH, so they only need to be copied when you deploy to a
 fresh root filesystem or change them:
 
 .. list-table::
@@ -199,7 +199,7 @@ removed, you can restore the original files by mounting the SD card on a PC.
 
    .. note::
 
-      The microSD card image for the R-Car/V4H SH uses a single partition that holds both ``/boot``
+      The microSD card image for the R-Car V4H SH uses a single partition that holds both ``/boot``
       and the root filesystem. Run ``lsblk`` to confirm the device name before mounting.
 
 4. Copy the original files back to the mounted partition. The key paths to restore, relative to

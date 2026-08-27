@@ -1,7 +1,7 @@
 Ubuntu Features
 ---------------
 
-This section covers the features available on the R-Car/V4H SH when running Ubuntu, including desktop environment setup and Docker installation.
+This section covers the features available on the R-Car V4H SH when running Ubuntu, including desktop environment setup and Docker installation.
 
 .. toctree::
    :maxdepth: 2

@@ -3,7 +3,7 @@ Common hardware setup
 
 .. caution::
 
-   The power supply for the R-Car/V4H SH board must be a USB Power Delivery adapter rated at 65 W or higher.
+   The power supply for the R-Car V4H SH board must be a USB Power Delivery adapter rated at 65 W or higher.
 
    The Power Control button (SW1) is a latching (push-push) button, so its physical position tells you
    the state:
@@ -84,7 +84,7 @@ the procedures in this guide connect to:
    Before proceeding, ensure that your machine has the necessary drivers and a terminal emulator (`MobaXterm <https://mobaxterm.mobatek.net/download.html>`_, `Tera Term <https://teratermproject.github.io/index-en.html>`_, etc.) installed.
 
    For **Windows** users, if the console does not connect, install the appropriate driver.
-   The serial communication between the **Windows PC** and **R-Car/V4H SH** requires: `FTDI Virtual COM Port (VCP) driver <https://ftdichip.com/drivers/vcp-drivers/>`_
+   The serial communication between the **Windows PC** and **R-Car V4H SH** requires: `FTDI Virtual COM Port (VCP) driver <https://ftdichip.com/drivers/vcp-drivers/>`_
 
    Download and install the Windows version (``.exe``).
 

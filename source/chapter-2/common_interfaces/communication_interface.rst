@@ -1,18 +1,18 @@
 Communication Interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section provides usage examples of the communication interfaces available on the R-Car/V4H SH.
+This section provides usage examples of the communication interfaces available on the R-Car V4H SH.
 
 .. _can_interface:
 
 CAN-FD x2
 """""""""
 
-The R-Car/V4H SH is equipped with two CAN-FD (Controller Area Network Flexible Data-Rate) ports that enable high-speed communication for automotive and industrial applications.
+The R-Car V4H SH is equipped with two CAN-FD (Controller Area Network Flexible Data-Rate) ports that enable high-speed communication for automotive and industrial applications.
 
 .. tip::
 
-   The R-Car/V4H SH is equipped with an onboard CAN transceiver (``MCP2558FDT-H_MNY``) and an integrated **120 Ω termination resistor**, eliminating the need for any external CAN transceiver circuitry.
+   The R-Car V4H SH is equipped with an onboard CAN transceiver (``MCP2558FDT-H_MNY``) and an integrated **120 Ω termination resistor**, eliminating the need for any external CAN transceiver circuitry.
 
 Connect the CAN-FD ports to your CAN network using appropriate cables, matching the CAN-H and CAN-L lines of each port.
 
@@ -26,11 +26,11 @@ matched to the physical connector:
 - **Top - schematic view.** The ``CAN BUS CN`` symbol taken from the board schematic,
   showing which signal is routed to each of the six pins.
 - **Bottom - photo of the board.** The same header as it appears on the
-  R-Car/V4H SH, with every pin labeled. Red labels are the CAN0 signals,
+  R-Car V4H SH, with every pin labeled. Red labels are the CAN0 signals,
   blue labels are the CAN1 signals.
 
 .. figure:: ../../images/can_fd.png
-   :alt: CAN BUS CN header of the R-Car/V4H SH, shown as a schematic symbol above and as a labeled board photo below
+   :alt: CAN BUS CN header of the R-Car V4H SH, shown as a schematic symbol above and as a labeled board photo below
    :align: center
    :width: 500px
 
@@ -69,7 +69,7 @@ matched to the physical connector:
      - CAN0_H
      - CAN0 bus line - high.
 
-Follow the steps below to use the CAN-FD interfaces on the R-Car/V4H SH running Ubuntu.
+Follow the steps below to use the CAN-FD interfaces on the R-Car V4H SH running Ubuntu.
 
 This example covers CAN-FD frames only; it does not cover the configuration of Classic CAN frames.
 
@@ -134,7 +134,7 @@ You can use the ``can-utils`` package for testing CAN-FD communication.
 RasPi GPIO 40-pin Header
 """"""""""""""""""""""""
 
-The Raspberry Pi GPIO 40-pin header on the R-Car/V4H SH provides a versatile interface for connecting various peripherals and expansion boards compatible with the Raspberry Pi pin layout. This header includes multiple communication protocols such as I2C, UART, GPIO, PCM, and PWM.
+The Raspberry Pi GPIO 40-pin header on the R-Car V4H SH provides a versatile interface for connecting various peripherals and expansion boards compatible with the Raspberry Pi pin layout. This header includes multiple communication protocols such as I2C, UART, GPIO, PCM, and PWM.
 
 The following communication protocols are supported:
 
@@ -148,11 +148,11 @@ Pin Out Diagram
 ~~~~~~~~~~~~~~~
 
 .. figure:: ../../images/GPIO_pin.png
-   :alt: R-Car/V4H SH Raspberry Pi GPIO 40-pin Header Pin Out
+   :alt: R-Car V4H SH Raspberry Pi GPIO 40-pin Header Pin Out
    :align: center
    :width: 600px
 
-   R-Car/V4H SH Raspberry Pi GPIO 40-pin Header Pin Out
+   R-Car V4H SH Raspberry Pi GPIO 40-pin Header Pin Out
 
 I2C (Inter-Integrated Circuit)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,7 +161,7 @@ The I2C interface allows communication with multiple slave devices using just tw
 
 It is commonly used for connecting sensors, displays, and other peripherals.
 
-On the R-Car/V4H SH, the I2C pins are located on the Raspberry Pi GPIO 40-pin header as follows:
+On the R-Car V4H SH, the I2C pins are located on the Raspberry Pi GPIO 40-pin header as follows:
 
 .. list-table:: I2C3 Interface Pins
    :header-rows: 1
@@ -230,9 +230,9 @@ In this example, I2C3 corresponds to bus number 3.
 
    *How to identify the correct I2C bus number for I2C3?*
 
-   You can identify the correct I2C bus number by checking the device tree source (DTS) file for the R-Car/V4H SH or by referring to the system documentation.
+   You can identify the correct I2C bus number by checking the device tree source (DTS) file for the R-Car V4H SH or by referring to the system documentation.
 
-   In this case, the device tree of the R-Car/V4H SH defines the I2C3 interface as ``e66d0000.i2c``, which is mapped to **I²C bus number 3**.
+   In this case, the device tree of the R-Car V4H SH defines the I2C3 interface as ``e66d0000.i2c``, which is mapped to **I²C bus number 3**.
 
 Scan for I2C devices on bus 3:
 
@@ -267,9 +267,9 @@ We can use the ``i2cset`` command to write data to control the FAN speed:
 UART (Universal Asynchronous Receiver/Transmitter)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The UART interface provides serial communication capabilities, allowing data exchange between the R-Car/V4H SH and other devices such as micro-controllers, GPS modules, or serial consoles.
+The UART interface provides serial communication capabilities, allowing data exchange between the R-Car V4H SH and other devices such as micro-controllers, GPS modules, or serial consoles.
 
-On the R-Car/V4H SH, the UART pins are located on the Raspberry Pi GPIO 40-pin header as follows:
+On the R-Car V4H SH, the UART pins are located on the Raspberry Pi GPIO 40-pin header as follows:
 
 .. list-table:: UART Interface Pins
    :header-rows: 1
@@ -314,22 +314,22 @@ Open a serial connection using ``minicom``:
 
    sudo minicom -D /dev/ttySC2 -b 115200
 
-Open and configure the serial console on the host computer to interact with the R-Car/V4H SH through the UART interface.
+Open and configure the serial console on the host computer to interact with the R-Car V4H SH through the UART interface.
 
 Enable echoing of typed characters in minicom by pressing ``Ctrl-A`` followed by ``E``.
 
 Press ``Ctrl-A``, then ``U``, to toggle the option that adds a carriage return (CR) to each incoming linefeed (LF) character received from the remote device.
 
-When you type in the minicom terminal, the characters are sent to the host computer through the UART interface on the R-Car/V4H SH.
+When you type in the minicom terminal, the characters are sent to the host computer through the UART interface on the R-Car V4H SH.
 
-Similarly, any data sent from the R-Car/V4H SH through the UART interface is displayed in the minicom terminal on the host computer.
+Similarly, any data sent from the R-Car V4H SH through the UART interface is displayed in the minicom terminal on the host computer.
 
 GPIO (General Purpose Input/Output)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The GPIO pins allow digital input and output operations, enabling interaction with various sensors, actuators, and other electronic components.
 
-Refer to the R-Car/V4H SH GPIO pinout documentation for detailed information on each GPIO pin's capabilities and functions.
+Refer to the R-Car V4H SH GPIO pinout documentation for detailed information on each GPIO pin's capabilities and functions.
 
 **Usage example with gpiod**
 
@@ -356,9 +356,9 @@ List lines for a specific GPIO chip (for example, ``gpiochip1``):
 Audio Interface
 """""""""""""""
 
-The audio interface is used for audio data transmission, allowing the R-Car/V4H SH to connect with audio codecs and other audio peripherals.
+The audio interface is used for audio data transmission, allowing the R-Car V4H SH to connect with audio codecs and other audio peripherals.
 
-The R-Car/V4H SH has two audio input ports. These signals are mixed on the IC and therefore handled as a single-channel input on the board.
+The R-Car V4H SH has two audio input ports. These signals are mixed on the IC and therefore handled as a single-channel input on the board.
 
 - Hardware setup:
 

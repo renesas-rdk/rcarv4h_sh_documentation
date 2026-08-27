@@ -60,7 +60,7 @@ Detailed Steps
 
 .. note::
 
-   The R-Car/V4H SH runs Ubuntu 24.04, while the original guide covers Yocto Linux. The
+   The R-Car V4H SH runs Ubuntu 24.04, while the original guide covers Yocto Linux. The
    following steps are based on that guide, adapted for Ubuntu 24.04.
 
 #. Unpack **[HyCo] Installation Scripts for Hybrid Compiler**
@@ -82,12 +82,12 @@ Detailed Steps
       * - ``INSTALL_CEVA_CSL``
         - ``1``
         - ``0``
-        - The R-Car/V4H SH platform does not support the CEVA DSP due to license restrictions,
+        - The R-Car V4H SH platform does not support the CEVA DSP due to license restrictions,
           so the automatic CEVA CSL installation is skipped.
       * - ``INSTALL_CEVA_DSP``
         - ``1``
         - ``0``
-        - The R-Car/V4H SH platform does not support the CEVA DSP due to license restrictions,
+        - The R-Car V4H SH platform does not support the CEVA DSP due to license restrictions,
           so the automatic CEVA DSP installation is skipped.
       * - ``INSTALL_PY310_ON_BOARD``
         - ``1``
@@ -152,7 +152,7 @@ Setting Up the RPC Server on the Target Board
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 REACTION runs compiled models on the board through a TVM RPC server (Hardware-In-the-Loop).
-Its runtime wheels only work with CPython 3.10 (``cp310``), but the R-Car/V4H SH board ships
+Its runtime wheels only work with CPython 3.10 (``cp310``), but the R-Car V4H SH board ships
 Ubuntu 24.04 with Python 3.12 and has neither ``pip`` nor ``rpm``. The ``python310-*.rpm``
 from the Yocto guide therefore does not apply. Install a private CPython 3.10 with ``uv``
 instead: no root needed, system Python untouched.

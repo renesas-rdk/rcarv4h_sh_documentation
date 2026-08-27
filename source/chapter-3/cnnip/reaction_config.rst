@@ -53,7 +53,7 @@ Basic Structure
    * - ``line``
      - Conversion line to follow: ``onnx`` or ``torch``.
    * - ``target``
-     - Target board: ``v4h2`` or ``v4m``. Use ``v4h2`` on the R-Car/V4H SH platform.
+     - Target board: ``v4h2`` or ``v4m``. Use ``v4h2`` on the R-Car V4H SH platform.
    * - ``target_os``
      - Optional. Target operating system: ``linux`` (default) or ``qnx``.
 
@@ -75,13 +75,13 @@ Tasks
        ``convert_configs`` is not needed for this task.
    * - ``tvm_cch``
      - Compile with TVM and run on CNN-IP + CPU of the board with the TVM runtime. No CEVA-SDT
-       license required, so this is the usual choice on the R-Car/V4H SH platform.
+       license required, so this is the usual choice on the R-Car V4H SH platform.
    * - ``tvm_cdh``
      - Compile with TVM and run on CNN-IP + CEVA DSP + CPU of the board. Requires a CEVA-SDT
-       license and is therefore not available on the R-Car/V4H SH platform.
+       license and is therefore not available on the R-Car V4H SH platform.
    * - ``tvm_bundle``
      - Compile the model into a standalone bundle covering all three compute units. Requires a
-       CEVA-SDT license and is therefore not available on the R-Car/V4H SH platform.
+       CEVA-SDT license and is therefore not available on the R-Car V4H SH platform.
 
 Actions
 ~~~~~~~

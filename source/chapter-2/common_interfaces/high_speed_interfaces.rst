@@ -1,16 +1,16 @@
 High-Speed Interface
 ^^^^^^^^^^^^^^^^^^^^
 
-The R-Car/V4H SH is equipped with several high-speed interfaces that enable users to connect a variety of peripherals and expansion modules.
+The R-Car V4H SH is equipped with several high-speed interfaces that enable users to connect a variety of peripherals and expansion modules.
 
-This section describes the high-speed interface unit of the R-Car/V4H SH.
+This section describes the high-speed interface unit of the R-Car V4H SH.
 
 PCIe 4.0
 """"""""
 
-The PCIe 4.0 interface on the R-Car/V4H SH allows for high-speed data transfer and connectivity with compatible PCIe devices.
+The PCIe 4.0 interface on the R-Car V4H SH allows for high-speed data transfer and connectivity with compatible PCIe devices.
 
-For example, you can connect a PCIe NVMe SSD to enhance storage performance. The following steps describe how to set up and use a PCIe NVMe SSD with the R-Car/V4H SH.
+For example, you can connect a PCIe NVMe SSD to enhance storage performance. The following steps describe how to set up and use a PCIe NVMe SSD with the R-Car V4H SH.
 
 - Hardware requirements:
 
@@ -18,9 +18,9 @@ For example, you can connect a PCIe NVMe SSD to enhance storage performance. The
 
 - Hardware setup:
 
-  #. Power off the R-Car/V4H SH.
-  #. Insert the M.2 NVMe SSD into the **CN5 M.2 Key-M slot** on the R-Car/V4H SH.
-  #. Power on the R-Car/V4H SH.
+  #. Power off the R-Car V4H SH.
+  #. Insert the M.2 NVMe SSD into the **CN5 M.2 Key-M slot** on the R-Car V4H SH.
+  #. Power on the R-Car V4H SH.
 
 .. important::
 
@@ -90,7 +90,7 @@ If you want to boot from the NVMe SSD, refer to the :ref:`Boot from NVMe SSD <bo
 MIPI-CSI camera x2
 """"""""""""""""""
 
-The R-Car/V4H SH features dual MIPI-CSI connectors that support camera input for applications requiring image capture and processing.
+The R-Car V4H SH features dual MIPI-CSI connectors that support camera input for applications requiring image capture and processing.
 
 .. note::
 
@@ -181,7 +181,7 @@ The following commands list the remaining capabilities of the camera:
 Ethernet AVB - 1 Gbps
 """""""""""""""""""""
 
-The Gigabit Ethernet port on the R-Car/V4H SH provides high-speed network connectivity for data communication and internet access.
+The Gigabit Ethernet port on the R-Car V4H SH provides high-speed network connectivity for data communication and internet access.
 
 Connect the network cable to the Gigabit Ethernet port before using the Ethernet interface.
 
@@ -269,9 +269,9 @@ Apply the changes with the following command:
 Set a MAC Address
 ~~~~~~~~~~~~~~~~~
 
-When you connect two or more R-Car/V4H SH boards to the same network (using the same router), you may encounter an issue where you cannot reach the boards over the network.
+When you connect two or more R-Car V4H SH boards to the same network (using the same router), you may encounter an issue where you cannot reach the boards over the network.
 
-This is due to duplicate MAC addresses. Because the R-Car/V4H SH uses a random MAC address by default, multiple boards might acquire the same MAC address.
+This is due to duplicate MAC addresses. Because the R-Car V4H SH uses a random MAC address by default, multiple boards might acquire the same MAC address.
 
 Consequently, two devices with the same MAC address will cause conflicts on the router, preventing network access.
 
@@ -304,7 +304,7 @@ Then apply the changes:
 USB 3.0 Type A x2 and USB Type-C x2
 """""""""""""""""""""""""""""""""""
 
-The R-Car/V4H SH includes two USB 3.0 Type-A ports and two USB 3.0 Type-C ports that support high-speed data transfer for connecting various USB peripherals, such as external storage devices, cameras, and input devices.
+The R-Car V4H SH includes two USB 3.0 Type-A ports and two USB 3.0 Type-C ports that support high-speed data transfer for connecting various USB peripherals, such as external storage devices, cameras, and input devices.
 
 To use these devices, simply connect them to the USB 3.0 Type-A or Type-C ports.
 
@@ -336,7 +336,7 @@ Example output:
 USB-WIFI Adapter Support
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following USB-WIFI adapters have been tested and are compatible with the R-Car/V4H SH:
+The following USB-WIFI adapters have been tested and are compatible with the R-Car V4H SH:
 
 - Ralink Technology, Corp. MT7601U Wireless Adapter
 - AC1300 TP-Link T3U Nano
@@ -344,7 +344,7 @@ The following USB-WIFI adapters have been tested and are compatible with the R-C
 
 .. note::
 
-   If you want to use a different USB WiFi adapter, make sure the required driver is available for the R-Car/V4H SH.
+   If you want to use a different USB WiFi adapter, make sure the required driver is available for the R-Car V4H SH.
 
    You need to identify the appropriate driver for the USB WiFi adapter and enable it in the Linux kernel configuration file. For example, add ``CONFIG_MT7601U=y`` to ``linux-sh/arch/arm64/configs/sparrow_hawk.config``, then rebuild and deploy the kernel image.
 
@@ -362,7 +362,7 @@ Usage example
 
 - Check USB devices
 
-  First, connect the USB-WIFI adapter to the R-Car/V4H SH.
+  First, connect the USB-WIFI adapter to the R-Car V4H SH.
 
   Then, run the following command to list all connected USB devices:
 

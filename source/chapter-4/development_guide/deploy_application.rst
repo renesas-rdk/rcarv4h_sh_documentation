@@ -3,7 +3,7 @@
 ROS 2 Application Deployment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section provides instructions for deploying ROS 2 applications to the Renesas R-Car/V4H SH platform.
+This section provides instructions for deploying ROS 2 applications to the Renesas R-Car V4H SH platform.
 
 Prerequisites
 """""""""""""
@@ -73,7 +73,7 @@ There are three ways to build your application:
 Deploy to Target
 """"""""""""""""
 
-There are two main methods to deploy your application to the R-Car/V4H SH platform:
+There are two main methods to deploy your application to the R-Car V4H SH platform:
 
 #. Use a VS Code task:
 
@@ -96,7 +96,7 @@ After deployment, install any additional dependencies on the target device.
 
       cd <path_to_your_ros2_ws>
 
-   Replace ``<path_to_your_ros2_ws>`` with the actual path to your ROS 2 workspace on the R-Car/V4H SH.
+   Replace ``<path_to_your_ros2_ws>`` with the actual path to your ROS 2 workspace on the R-Car V4H SH.
 
 #. Set up the ROS 2 environment and install dependencies using ``rosdep``:
 

@@ -6,7 +6,7 @@ that enables developers to leverage the CNN-IP hardware accelerator on the R-Car
 learning inference tasks.
 
 It provides a set of tools, libraries and Docker images to facilitate the deployment of
-convolutional neural network models on the R-Car/V4H SH hardware.
+convolutional neural network models on the R-Car V4H SH hardware.
 
 .. important::
 

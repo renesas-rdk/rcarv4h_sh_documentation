@@ -2,7 +2,7 @@ What is IMP-X7?
 ^^^^^^^^^^^^^^^
 
 IMP-X7 is the image recognition engine integrated in the Renesas R-Car V4H SoC used on the
-R-Car/V4H SH platform. It accelerates deep learning inference for computer vision workloads,
+R-Car V4H SH platform. It accelerates deep learning inference for computer vision workloads,
 providing high-performance processing of image and video data for real-time analysis and
 recognition.
 
@@ -20,7 +20,7 @@ image recognition tasks efficiently.
 
 .. important::
 
-   On the R-Car/V4H SH platform, the CEVA Vision DSP is not supported due to license
+   On the R-Car V4H SH platform, the CEVA Vision DSP is not supported due to license
    restrictions. Deep learning acceleration is therefore provided by the CNN-IP alone, with the
    Cortex-A76 application CPU clusters handling the remaining processing.
 

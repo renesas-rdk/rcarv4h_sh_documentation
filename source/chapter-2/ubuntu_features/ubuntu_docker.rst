@@ -1,4 +1,4 @@
-Docker with Ubuntu on R-Car/V4H SH
+Docker with Ubuntu on R-Car V4H SH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Docker is available on Ubuntu for container-based development and deployment.
@@ -10,18 +10,18 @@ Main points:
 - Useful for packaging development environments
 - Helps with reproducible workflows
 
-This guide explains how to install and verify Docker on the R-Car/V4H SH running Ubuntu.
+This guide explains how to install and verify Docker on the R-Car V4H SH running Ubuntu.
 
 Prerequisites
 """""""""""""
 
-- R-Car/V4H SH running Ubuntu
+- R-Car V4H SH running Ubuntu
 - Internet connection
 
 Install Docker
 """"""""""""""
 
-Follow the steps below to install Docker on the R-Car/V4H SH:
+Follow the steps below to install Docker on the R-Car V4H SH:
 
 .. code-block:: bash
 

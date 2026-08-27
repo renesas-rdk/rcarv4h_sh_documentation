@@ -3,7 +3,7 @@
 Boot Mode Configuration (DIP Switch)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Before powering up the R-Car/V4H SH, make sure the board's boot mode is configured correctly
+Before powering up the R-Car V4H SH, make sure the board's boot mode is configured correctly
 using the Mode Switch (**SW2**). The procedures in the rest of this guide refer back to the
 tables in this section whenever they ask you to change a switch position.
 
@@ -65,7 +65,7 @@ Each position sets the electrical condition of its mode pin:
 Selection of Boot Device
 """"""""""""""""""""""""
 
-Pins 1, 2, and 3 (**MD1**, **MD2**, **MD4**) select the boot device of the R-Car/V4H SH board:
+Pins 1, 2, and 3 (**MD1**, **MD2**, **MD4**) select the boot device of the R-Car V4H SH board:
 
 .. list-table:: Selection of Boot Device
    :header-rows: 1
@@ -93,7 +93,7 @@ Pins 1, 2, and 3 (**MD1**, **MD2**, **MD4**) select the boot device of the R-Car
 Selection of Master Boot Processor
 """"""""""""""""""""""""""""""""""
 
-Pin 4 (**MD6**) selects the master boot processor of the R-Car/V4H SH board:
+Pin 4 (**MD6**) selects the master boot processor of the R-Car V4H SH board:
 
 .. list-table:: Selection of Master Boot Processor
    :header-rows: 1

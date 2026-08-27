@@ -3,7 +3,7 @@
 Application Development Guide
 -----------------------------
 
-This section covers the development of applications on the R-Car/V4H SH platform, including setting up, cross-building, debugging, and deploying applications.
+This section covers the development of applications on the R-Car V4H SH platform, including setting up, cross-building, debugging, and deploying applications.
 
 .. toctree::
    :maxdepth: 2

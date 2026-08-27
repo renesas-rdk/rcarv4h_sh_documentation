@@ -6,16 +6,16 @@ Foxglove Visualization
 `Foxglove Studio <https://foxglove.dev/>`_ is a popular tool for visualizing running ROS 2 applications, similar to `RViz <https://docs.ros.org/en/jazzy/Tutorials/Intermediate/RViz/RViz-User-Guide/RViz-User-Guide.html>`_.
 
 It provides a web-based visualization client and a desktop application for both Windows and Ubuntu.
-This guide walks through installing Foxglove Studio, connecting it to a ROS 2 application on the R-Car/V4H SH board, and using visualization panels.
+This guide walks through installing Foxglove Studio, connecting it to a ROS 2 application on the R-Car V4H SH board, and using visualization panels.
 
 Prerequisites
 """""""""""""
 
 Before starting, make sure:
 
-- Your host PC, running Windows or Ubuntu, and the R-Car/V4H SH board are on the **same network**.
-- A ROS 2 application is running on the R-Car/V4H SH board. See :ref:`Sample Applications <sample_apps>`.
-- You know the **IP address** of your R-Car/V4H SH board. You can find it by running the following command on the board:
+- Your host PC, running Windows or Ubuntu, and the R-Car V4H SH board are on the **same network**.
+- A ROS 2 application is running on the R-Car V4H SH board. See :ref:`Sample Applications <sample_apps>`.
+- You know the **IP address** of your R-Car V4H SH board. You can find it by running the following command on the board:
 
   .. code-block:: bash
 
@@ -28,14 +28,14 @@ Install Foxglove Studio
 #. Run the installer and follow the on-screen instructions to complete the installation.
 #. Launch Foxglove Studio after installation.
 
-Connect to the R-Car/V4H SH Board
+Connect to the R-Car V4H SH Board
 """""""""""""""""""""""""""""""""
 
-Foxglove Studio connects to the ROS 2 application through a WebSocket bridge that runs on the R-Car/V4H SH board.
+Foxglove Studio connects to the ROS 2 application through a WebSocket bridge that runs on the R-Car V4H SH board.
 
 .. tip::
 
-   By default, the `Foxglove Bridge <https://docs.foxglove.dev/docs/visualization/ros-foxglove-bridge>`_ runs on the R-Car/V4H SH board when a sample application is launched.
+   By default, the `Foxglove Bridge <https://docs.foxglove.dev/docs/visualization/ros-foxglove-bridge>`_ runs on the R-Car V4H SH board when a sample application is launched.
 
    It can also be deployed to any `ROS 2 device on the same network <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Domain-ID.html>`_, for example, a laptop or another embedded device.
 
@@ -70,7 +70,7 @@ Follow these steps to establish the connection:
 
       ws://<board-IP>:8765
 
-   Replace ``<board-IP>`` with the actual IP address of your R-Car/V4H SH board or the host machine if the Foxglove Bridge runs on the host instead.
+   Replace ``<board-IP>`` with the actual IP address of your R-Car V4H SH board or the host machine if the Foxglove Bridge runs on the host instead.
 
    For example, if the board IP address is ``192.168.1.100``, enter:
 
@@ -90,14 +90,14 @@ Follow these steps to establish the connection:
 
 If the connection is successful, the status bar at the top of Foxglove Studio shows a green indicator. If it fails, verify that:
 
-- The R-Car/V4H SH board is powered on and connected to the network.
+- The R-Car V4H SH board is powered on and connected to the network.
 - A ROS 2 application with the Foxglove Bridge node is running on the board.
 - No firewall is blocking port ``8765``.
 
 Configure the Foxglove Visualization Workspace
 """"""""""""""""""""""""""""""""""""""""""""""
 
-After connecting to the R-Car/V4H SH board, configure the Foxglove Studio workspace so that you can monitor topics more effectively.
+After connecting to the R-Car V4H SH board, configure the Foxglove Studio workspace so that you can monitor topics more effectively.
 
 This step covers two common approaches:
 
@@ -113,7 +113,7 @@ The following image shows the screen after connecting to the Foxglove Bridge:
    :alt: Foxglove Connected
    :width: 800px
 
-   Foxglove Studio after connecting to the R-Car/V4H SH
+   Foxglove Studio after connecting to the R-Car V4H SH
 
 In the top-right corner of the window, you can find the **Add panel** button (1), the **Toggle left sidebar** button (2), and the **Toggle right sidebar** button (3).
 
@@ -127,7 +127,7 @@ When you first connect, the Foxglove Studio workspace may be empty. You need to 
 #. Click the **Add panel** button (1) in the top-right corner of the Foxglove Studio window.
 #. Select the desired panel type from the panel list.
 
-The following table lists commonly used panels for R-Car/V4H SH applications:
+The following table lists commonly used panels for R-Car V4H SH applications:
 
 .. list-table:: Common Foxglove Panels
    :header-rows: 1
@@ -138,7 +138,7 @@ The following table lists commonly used panels for R-Car/V4H SH applications:
      - Typical Use and Suggested Settings
    * - **Image**
      - Displays camera image streams and image annotations.
-     - Use this panel to view the camera feed from the R-Car/V4H SH board with detection overlays. Set the image topic to the published camera topic, for example, ``/image_raw`` or a compressed image topic used by the application.
+     - Use this panel to view the camera feed from the R-Car V4H SH board with detection overlays. Set the image topic to the published camera topic, for example, ``/image_raw`` or a compressed image topic used by the application.
    * - **3D**
      - Renders 3D scenes with robot models, point clouds, transforms, and markers.
      - Use this panel to visualize robot arm poses, hand tracking, landmarks, and spatial data. Configure the fixed frame correctly and enable the relevant marker, transform, or pose topics.
@@ -212,7 +212,7 @@ These views are especially useful when:
 Import a Pre-configured Layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some R-Car/V4H SH sample applications provide pre-configured Foxglove layouts as JSON files.
+Some R-Car V4H SH sample applications provide pre-configured Foxglove layouts as JSON files.
 These layouts automatically set up panels and topic subscriptions for a specific application, which reduces manual configuration work.
 
 The layout files are typically located in the application's ROS 2 package under:

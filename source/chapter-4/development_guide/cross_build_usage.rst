@@ -130,7 +130,7 @@ The command performs the following steps:
 .. important::
 
    - Run this command whenever you add new packages to your ROS 2 workspace.
-   - Make sure the library versions in the sysroot match those in the R-Car/V4H SH Linux image. Otherwise, runtime errors may occur on the target device.
+   - Make sure the library versions in the sysroot match those in the R-Car V4H SH Linux image. Otherwise, runtime errors may occur on the target device.
 
 cross-colcon-build
 """"""""""""""""""
@@ -168,4 +168,4 @@ Development Workflow
 #. **Install dependencies** using ``sysroot-rosdep-install`` to ensure that all required libraries are available in the sysroot.
 #. **Optional:** Use ``arm64-chroot`` to enter the chroot environment and run additional commands.
 #. **Build your packages** using ``cross-colcon-build``.
-#. **Deploy the built applications** to the R-Car/V4H SH. Follow the next section for deployment instructions.
+#. **Deploy the built applications** to the R-Car V4H SH. Follow the next section for deployment instructions.

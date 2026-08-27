@@ -3,7 +3,7 @@
 Cross-build Non-ROS 2 Applications
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The cross-compilation environment provided by the Renesas Docker image can also be used to build non-ROS 2 applications for the R-Car/V4H SH platform.
+The cross-compilation environment provided by the Renesas Docker image can also be used to build non-ROS 2 applications for the R-Car V4H SH platform.
 
 This section describes how to cross-compile a generic CMake-based application using the provided toolchain.
 
@@ -72,15 +72,15 @@ For CMake-based projects, use the cross-compilation toolchain file provided in t
 
       make -j$(nproc)
 
-#. The resulting ARM64 binaries are ready to be deployed to the R-Car/V4H SH.
+#. The resulting ARM64 binaries are ready to be deployed to the R-Car V4H SH.
 
 Deploy to Target
 """"""""""""""""
 
-Copy the built binaries to the R-Car/V4H SH using ``scp`` or another file transfer method.
+Copy the built binaries to the R-Car V4H SH using ``scp`` or another file transfer method.
 
 .. code-block:: bash
 
    scp ./your_application ubuntu@<TARGET_IP>:/home/ubuntu/
 
-Replace ``<TARGET_IP>`` with the IP address of your R-Car/V4H SH board.
+Replace ``<TARGET_IP>`` with the IP address of your R-Car V4H SH board.

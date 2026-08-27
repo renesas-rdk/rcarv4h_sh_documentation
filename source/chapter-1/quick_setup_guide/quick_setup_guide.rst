@@ -1,12 +1,12 @@
 .. _quick_setup_sh_guide:
 
-Quick start guide for R-Car/V4H SH
+Quick start guide for R-Car V4H SH
 ----------------------------------
 
-This guide provides step-by-step instructions for setting up the R-Car/V4H Sparrow Hawk (SH) board and preparing the development environment.
+This guide provides step-by-step instructions for setting up the R-Car V4H Sparrow Hawk (SH) board and preparing the development environment.
 
 Follow the sections in order. Starting from a board straight out of the box, you will end up
-with Ubuntu 24.04 and ROS 2 Jazzy running on the R-Car/V4H SH:
+with Ubuntu 24.04 and ROS 2 Jazzy running on the R-Car V4H SH:
 
 .. list-table::
    :header-rows: 1
@@ -42,7 +42,7 @@ Everything you need to bring up the board is distributed in a single software pa
 Server image that you flash onto the microSD card. Download the package to your host PC before
 you start:
 
-`R-Car/V4H Sparrow Hawk Software package <https://github.com/renesas-rdk/rcarv4h_sh_documentation/releases>`_
+`R-Car V4H Sparrow Hawk Software package <https://github.com/renesas-rdk/rcarv4h_sh_documentation/releases>`_
 
 Extract the ``r-car-v4h-sparrow-hawk-software-package-v***.zip`` file. The ``board_setup`` folder inside it has the following structure:
 

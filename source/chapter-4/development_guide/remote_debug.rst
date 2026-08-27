@@ -1,7 +1,7 @@
 ROS 2 Application Remote Debugging
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section describes how to remotely debug ROS 2 applications on the Renesas R-Car/V4H SH platform by using GDB.
+This section describes how to remotely debug ROS 2 applications on the Renesas R-Car V4H SH platform by using GDB.
 
 It covers the required setup, the debugging workflow, and practical notes for running a remote debugging session from VS Code.
 
@@ -14,13 +14,13 @@ Prerequisites
 
 #. Complete the :ref:`Cross compilation environment setup <requirements_ros2_cross_build>` section.
 
-   Make sure VS Code is configured with the required extensions and workspace settings for ROS 2 development, and that the application has been successfully deployed to the R-Car/V4H SH platform.
+   Make sure VS Code is configured with the required extensions and workspace settings for ROS 2 development, and that the application has been successfully deployed to the R-Car V4H SH platform.
 
 #. Make sure the required :ref:`variables <workspace_settings>` in ``settings.json`` are configured correctly, especially: ``TARGET_IP``
 
 #. Ensure that all runtime dependencies required by the application are installed on the target device.
 
-#. Install ``gdbserver`` on the R-Car/V4H SH platform if it is not already available:
+#. Install ``gdbserver`` on the R-Car V4H SH platform if it is not already available:
 
    .. code-block:: bash
 

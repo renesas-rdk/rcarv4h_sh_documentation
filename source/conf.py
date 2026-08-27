@@ -13,7 +13,7 @@ except ImportError:
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'R-Car/V4H Sparrow Hawk User Manual'
+project = 'R-Car V4H Sparrow Hawk User Manual'
 copyright = '2026, Renesas Electronics Corporation'
 author = 'Renesas Electronics Corporation'
 
@@ -39,7 +39,7 @@ poly_release = getattr(poly_current, 'name', None)
 release = poly_release or os.getenv('READTHEDOCS_VERSION', os.getenv('DOCS_VERSION', '1.0'))
 version = release.lstrip('v')
 
-# Kernel of the R-Car/V4H SH image. Change KERNEL_VERSION here when the kernel is
+# Kernel of the R-Car V4H SH image. Change KERNEL_VERSION here when the kernel is
 # updated and every prose and table occurrence follows. Substitutions are not
 # expanded inside code blocks, so the few occurrences in shell examples still have
 # to be edited by hand.
@@ -107,7 +107,7 @@ latex_elements = {
 latex_documents = [
     ('index',
      'R-Car_V4H_Sparrow_Hawk_User_Manual.tex',
-     r'R-Car/V4H Sparrow Hawk\\User Manual',
+     r'R-Car V4H Sparrow Hawk\\User Manual',
      'Renesas Electronics Corporation',
      'manual'),
 ]

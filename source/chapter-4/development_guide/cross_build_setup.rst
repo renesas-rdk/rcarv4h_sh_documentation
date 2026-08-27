@@ -3,7 +3,7 @@
 Cross-compilation Environment Setup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section provides instructions on how to set up the cross-compilation environment for building ROS 2 applications for the R-Car/V4H SH platform.
+This section provides instructions on how to set up the cross-compilation environment for building ROS 2 applications for the R-Car V4H SH platform.
 
 Host machine requirements
 """""""""""""""""""""""""
@@ -14,7 +14,7 @@ Supported host operating systems:
 - **Windows**: Windows 10/11 (x86_64) with Docker Desktop or WSL2 (Ubuntu 24.04).
 - **macOS**: macOS 13 Ventura or later on Apple Silicon - **provides good performance**.
 
-The following image shows the expected setup for cross-building applications for the R-Car/V4H SH platform:
+The following image shows the expected setup for cross-building applications for the R-Car V4H SH platform:
 
 .. figure:: ../../images/common_hardware_setup.png
    :align: center

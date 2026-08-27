@@ -3,12 +3,12 @@
 Custom Linux Kernel and Device Tree
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section describes how to customize and build the Linux kernel and device tree blobs (DTBs) for the R-Car/V4H SH by using the `rcar-utils <https://github.com/renesas-rdk/rcar-utils>`_ repository.
+This section describes how to customize and build the Linux kernel and device tree blobs (DTBs) for the R-Car V4H SH by using the `rcar-utils <https://github.com/renesas-rdk/rcar-utils>`_ repository.
 
 Customizing and Building the Linux Kernel
 """""""""""""""""""""""""""""""""""""""""
 
-Use the build script provided in the ``rcar-utils`` repository to build the Linux kernel for the R-Car/V4H SH.
+Use the build script provided in the ``rcar-utils`` repository to build the Linux kernel for the R-Car V4H SH.
 
 Change to the build script directory:
 
@@ -148,7 +148,7 @@ Customizing and Building the Device Tree
 
 Use the device tree sources in the ``linux-sh`` repository to modify hardware-related settings such as enabled peripherals, pin control, buses, and attached devices.
 
-For the R-Car/V4H SH, the main device tree source file is located at
+For the R-Car V4H SH, the main device tree source file is located at
 ``linux-sh/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts``.
 
 The device tree overlay source files are located at

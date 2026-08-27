@@ -1,4 +1,4 @@
-Welcome to R-Car/V4H Sparrow Hawk Documentation!
+Welcome to R-Car V4H Sparrow Hawk Documentation!
 ================================================
 
 .. tip::
@@ -8,7 +8,7 @@ Welcome to R-Car/V4H Sparrow Hawk Documentation!
    Use ``Search docs`` to quickly find specific topics or information.
 
    A version selector is available below ``Search docs``, allowing you to switch between different versions of the documentation.
-   Select the version that matches your R-Car/V4H Sparrow Hawk to ensure you are viewing the most relevant information.
+   Select the version that matches your R-Car V4H Sparrow Hawk to ensure you are viewing the most relevant information.
 
    If you have any questions or need further assistance, feel free to contact us on GitHub:
    `renesas-rdk <https://github.com/renesas-rdk/rcarv4h_sh_documentation>`_.

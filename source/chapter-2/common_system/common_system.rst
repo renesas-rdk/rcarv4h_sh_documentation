@@ -1,7 +1,7 @@
 Common system configuration
 ---------------------------
 
-This section describes how to customize and rebuild the Linux system for the R-Car/V4H SH, including
+This section describes how to customize and rebuild the Linux system for the R-Car V4H SH, including
 kernel, device tree, and loadable modules.
 
 .. toctree::

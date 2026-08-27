@@ -1,26 +1,26 @@
-Ubuntu System with R-Car/V4H SH
+Ubuntu System with R-Car V4H SH
 -------------------------------
 
-This section provides usage information about the interfaces available on the R-Car/V4H SH when running the Ubuntu system.
+This section provides usage information about the interfaces available on the R-Car V4H SH when running the Ubuntu system.
 
 For more details about specification of each interface, refer to the `Sparrow Hawk Hardware User's Manual <https://drive.google.com/file/d/1lqiRE7t8C6GWOmuj0PKMItuj-R3VaYD1/view>`_.
 
 Overview
 ^^^^^^^^
-The R-Car/V4H SH supports multiple peripheral interfaces that allow users to connect and control external devices for various robotic and industrial applications.
+The R-Car V4H SH supports multiple peripheral interfaces that allow users to connect and control external devices for various robotic and industrial applications.
 These interfaces include:
 
 .. figure:: ../../images/hardware_interface.png
-   :alt: R-Car/V4H Sparrow Hawk Hardware Interfaces
+   :alt: R-Car V4H Sparrow Hawk Hardware Interfaces
    :align: center
    :width: 800px
 
-   R-Car/V4H Sparrow Hawk Hardware Interfaces
+   R-Car V4H Sparrow Hawk Hardware Interfaces
 
 Main Interfaces
 ^^^^^^^^^^^^^^^
 
-The main interfaces available on the R-Car/V4H SH are listed below.
+The main interfaces available on the R-Car V4H SH are listed below.
 
 .. list-table:: Main Interfaces
    :header-rows: 1

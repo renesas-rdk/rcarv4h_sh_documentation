@@ -18,7 +18,7 @@ Workflow
 
 .. note::
 
-   The R-Car/V4H SH platform does not support the CEVA DSP, so ``task: tvm_cch``
+   The R-Car V4H SH platform does not support the CEVA DSP, so ``task: tvm_cch``
    (CNN-IP + CPU) is the usual choice. The ``tvm_cdh`` and ``tvm_bundle`` tasks require a
    CEVA-SDT license.
 

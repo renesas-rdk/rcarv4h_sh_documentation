@@ -86,4 +86,4 @@ After powering on the board **for the first time**, perform the following steps:
       echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
       source ~/.bashrc
 
-This completes the **Quick Start Guide for R-Car/V4H SH**.
+This completes the **Quick Start Guide for R-Car V4H SH**.

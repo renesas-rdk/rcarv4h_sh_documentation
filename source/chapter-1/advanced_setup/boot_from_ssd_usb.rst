@@ -2,7 +2,7 @@
 
 .. _boot_from_usb:
 
-Booting R-Car/V4H SH from NVMe SSD or USB Storage
+Booting R-Car V4H SH from NVMe SSD or USB Storage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The advantages of booting from an NVMe SSD or a USB storage device include **faster read/write speeds**, improved performance, and increased storage capacity compared to booting from an SD card.
@@ -29,7 +29,7 @@ The boot flow is the same for both devices: write the root file system image to 
 Hardware Required
 """""""""""""""""
 
-- R-Car/V4H SH board with power supply and serial console (see :ref:`Quick Setup Guide <quick_setup_sh_guide>`).
+- R-Car V4H SH board with power supply and serial console (see :ref:`Quick Setup Guide <quick_setup_sh_guide>`).
 - One of the following storage devices:
 
   - M.2 NVMe SSD.
@@ -40,7 +40,7 @@ Hardware Required
 Hardware Connection
 """""""""""""""""""
 
-The following image shows how to connect the M.2 NVMe SSD to the onboard M.2 slot of the R-Car/V4H SH:
+The following image shows how to connect the M.2 NVMe SSD to the onboard M.2 slot of the R-Car V4H SH:
 
 .. figure:: ../../images/ssd_connection.png
    :alt: SSD Connection Diagram
@@ -49,7 +49,7 @@ The following image shows how to connect the M.2 NVMe SSD to the onboard M.2 slo
 
    SSD Connection Diagram
 
-A USB storage device does not require any adapter board. Plug it directly into one of the USB 3.0 Type-A ports of the R-Car/V4H SH.
+A USB storage device does not require any adapter board. Plug it directly into one of the USB 3.0 Type-A ports of the R-Car V4H SH.
 
 Detailed Steps
 """"""""""""""
@@ -57,7 +57,7 @@ Detailed Steps
 .. important::
 
    - Make sure to back up any important data on the storage device before proceeding, as the following steps will erase all existing data on it.
-   - Connect the M.2 NVMe SSD to the R-Car/V4H SH board before powering on the board.
+   - Connect the M.2 NVMe SSD to the R-Car V4H SH board before powering on the board.
    - Connect the USB storage device before you enter the U-Boot prompt, so that U-Boot can detect it.
    - Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
 
@@ -78,12 +78,12 @@ Storage device preparation
 
 #. Prepare the storage device:
 
-   - For an NVMe SSD: insert the M.2 NVMe SSD directly into the onboard M.2 slot of the R-Car/V4H SH.
-   - For a USB storage device: plug it into one of the USB 3.0 Type-A ports of the R-Car/V4H SH.
+   - For an NVMe SSD: insert the M.2 NVMe SSD directly into the onboard M.2 slot of the R-Car V4H SH.
+   - For a USB storage device: plug it into one of the USB 3.0 Type-A ports of the R-Car V4H SH.
 
 #. Boot from the SD card:
 
-   - Insert the SD card with the Ubuntu image into the R-Car/V4H SH and power it on.
+   - Insert the SD card with the Ubuntu image into the R-Car V4H SH and power it on.
    - Ensure that the system boots successfully from the SD card.
 
 #. Install the required tools:
@@ -127,14 +127,14 @@ Storage device preparation
         # USB storage device
         sudo bmaptool copy ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.xz /dev/sda
 
-#. From now on, the SD card is no longer required for booting the system. You can remove the SD card from the R-Car/V4H SH.
+#. From now on, the SD card is no longer required for booting the system. You can remove the SD card from the R-Car V4H SH.
 
 .. _ssd_bootloader:
 
 Configure the bootloader
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Make sure you can access the R-Car/V4H SH board via serial console.
+#. Make sure you can access the R-Car V4H SH board via serial console.
 #. Power off the board and power it on again to access the bootloader prompt. Press any key to stop the autoboot process and access the U-Boot prompt.
 #. At the U-Boot prompt, set the boot device to the NVMe SSD or to the USB storage device by running the following commands:
 
@@ -194,7 +194,7 @@ Configure the bootloader
 Known Issues
 """"""""""""
 
-When booting the R-Car/V4H SH from an NVMe SSD or a USB storage device, the following error message may appear on the serial console after you press the Reset button on the board:
+When booting the R-Car V4H SH from an NVMe SSD or a USB storage device, the following error message may appear on the serial console after you press the Reset button on the board:
 
 .. code-block:: text
 

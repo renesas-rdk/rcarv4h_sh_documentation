@@ -1,7 +1,7 @@
 Cross-compilation FAQ
 ^^^^^^^^^^^^^^^^^^^^^
 
-This section provides answers to frequently asked questions about cross-compilation for the R-Car/V4H SH using the provided Docker environment and tools.
+This section provides answers to frequently asked questions about cross-compilation for the R-Car V4H SH using the provided Docker environment and tools.
 
 General
 """""""
@@ -11,7 +11,7 @@ General
    ``cross-colcon-build`` is a wrapper around ``colcon build`` that automatically sets the CMake toolchain file and other arguments required for cross-compilation to ARM64.
 
    Do **not** use ``colcon build`` directly inside the Docker container.
-   It would attempt to build for the host architecture, typically AMD64, and the resulting binaries would not run on the R-Car/V4H SH board.
+   It would attempt to build for the host architecture, typically AMD64, and the resulting binaries would not run on the R-Car V4H SH board.
 
    Always use ``cross-colcon-build`` for building applications that will run on the target device.
 
@@ -149,7 +149,7 @@ Sysroot and Docker Environment
 
    .. _abi_mismatch:
 
-   The sysroot used for cross-compilation must match the Linux image running on the R-Car/V4H SH board.
+   The sysroot used for cross-compilation must match the Linux image running on the R-Car V4H SH board.
 
    If the board's Linux image is updated, for example, after a firmware update or OS upgrade, the sysroot inside the Docker container may become outdated.
    This can cause runtime errors such as missing symbols or incompatible shared libraries.
@@ -221,7 +221,7 @@ Debugging
 
 #. ``gdbserver`` is not installed on the board. How do I install it?
 
-   Install ``gdbserver`` on the R-Car/V4H SH board:
+   Install ``gdbserver`` on the R-Car V4H SH board:
 
    .. code-block:: bash
 

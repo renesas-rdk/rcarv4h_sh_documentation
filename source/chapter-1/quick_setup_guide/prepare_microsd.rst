@@ -3,7 +3,7 @@
 Preparing the root file system microSD card
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To boot the R-Car/V4H SH using a microSD card, you must first flash a bootable Linux image onto it.
+To boot the R-Car V4H SH using a microSD card, you must first flash a bootable Linux image onto it.
 Two options are described below: ``bmaptool`` on Ubuntu, or Balena Etcher on Windows, macOS, or Linux.
 
 microSD card requirements

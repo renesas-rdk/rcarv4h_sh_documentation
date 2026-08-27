@@ -1,14 +1,14 @@
 Other interfaces
 ^^^^^^^^^^^^^^^^
 
-The R-Car/V4H SH is equipped with several additional interfaces to enhance its functionality and connectivity options.
+The R-Car V4H SH is equipped with several additional interfaces to enhance its functionality and connectivity options.
 
 This section provides an overview of these interfaces, including DisplayPort, DSI, USB-UART, and JTAG.
 
 DisplayPort
 """""""""""
 
-The R-Car/V4H SH features a DisplayPort interface (**CN6**) for video output to an external display.
+The R-Car V4H SH features a DisplayPort interface (**CN6**) for video output to an external display.
 To use this interface, connect a DisplayPort cable from the board to a compatible monitor.
 
 The DisplayPort interface also supports audio output, allowing you to transmit both video and audio signals through the same connection.
@@ -22,7 +22,7 @@ This is particularly useful for multimedia applications.
 DSI 
 """
 
-The R-Car/V4H SH includes a DSI interface (**J4**) for connecting to compatible displays.
+The R-Car V4H SH includes a DSI interface (**J4**) for connecting to compatible displays.
 
 This interface is commonly used for high-resolution displays and touchscreens, providing a direct connection to the display panel.
 
@@ -38,7 +38,7 @@ The following displays/adapters are supported:
 USB-UART
 """"""""
 
-The R-Car/V4H SH includes a USB-UART interface (**CN4**) for serial communication and debugging purposes.
+The R-Car V4H SH includes a USB-UART interface (**CN4**) for serial communication and debugging purposes.
 This interface allows you to connect the board to a host computer via a USB cable and access the serial console.
 
 The single USB connection exposes two serial channels on the host computer.
@@ -92,7 +92,7 @@ For example, to open the main console with ``minicom`` on a Linux host:
 JTAG
 """"
 
-The R-Car/V4H SH provides a JTAG interface (**CN3**) for debugging and programming the three
+The R-Car V4H SH provides a JTAG interface (**CN3**) for debugging and programming the three
 Arm® Cortex®-R52 (CR52) cores.
 
 This interface allows developers to perform low-level debugging, firmware updates, and system

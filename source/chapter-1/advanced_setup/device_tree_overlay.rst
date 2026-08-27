@@ -8,7 +8,7 @@ before the kernel starts. It can add, remove, or modify nodes and properties, wh
 possible to describe an optional piece of hardware - a camera module, a display panel, a fan -
 without maintaining a separate device tree for every possible combination.
 
-On the R-Car/V4H SH, overlays are shipped inside ``/boot/fitImage`` and are selected by U-Boot at
+On the R-Car V4H SH, overlays are shipped inside ``/boot/fitImage`` and are selected by U-Boot at
 boot time. In the normal case the selection is automatic: the board detects what is connected and
 applies the matching overlays, so you do not have to configure anything.
 

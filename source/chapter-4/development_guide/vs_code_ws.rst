@@ -3,7 +3,7 @@
 ROS 2 VS Code Workspace Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section explains the VS Code workspace configuration used for deploying, running, and debugging ROS 2 applications on the Renesas R-Car/V4H SH platform.
+This section explains the VS Code workspace configuration used for deploying, running, and debugging ROS 2 applications on the Renesas R-Car V4H SH platform.
 
 Prerequisites
 """""""""""""

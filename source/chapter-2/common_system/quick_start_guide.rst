@@ -1,7 +1,7 @@
 Overview
 ^^^^^^^^
 
-The R-Car/V4H SH uses Linux kernel |kernel_version| from the **R-Car Community team**, whose
+The R-Car V4H SH uses Linux kernel |kernel_version| from the **R-Car Community team**, whose
 sources live in `linux-sh <https://github.com/renesas-rdk/linux-sh>`_. Every component is rebuilt
 on an **Ubuntu 24.04** host.
 
@@ -40,7 +40,7 @@ Prerequisites
      - Ubuntu 24.04, either a physical machine or a Docker container based on an Ubuntu 24.04
        image. The latter also covers Windows and macOS hosts.
    * - `linux-sh <https://github.com/renesas-rdk/linux-sh>`_
-     - Linux kernel source code for the R-Car/V4H SH.
+     - Linux kernel source code for the R-Car V4H SH.
    * - `rcar-utils <https://github.com/renesas-rdk/rcar-utils>`_
      - Build scripts used throughout this section.
    * - Internet access
@@ -52,7 +52,7 @@ Prerequisites
 Available AI Agent Skills
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Skills for the R-Car/V4H SH kernel build, located in
+Skills for the R-Car V4H SH kernel build, located in
 ``rcar-utils/.claude/skills/<name>/SKILL.md``.
 
 .. list-table::

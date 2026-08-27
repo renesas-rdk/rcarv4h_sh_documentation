@@ -1,23 +1,23 @@
 .. _ubuntu_desktop:
 
-Ubuntu Desktop with R-Car/V4H SH
+Ubuntu Desktop with R-Car V4H SH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ubuntu Desktop is supported together with the R-Car/V4H SH environment.
+Ubuntu Desktop is supported together with the R-Car V4H SH environment.
 
 Main points:
 
-- Ubuntu Desktop environment is available on R-Car/V4H SH
+- Ubuntu Desktop environment is available on R-Car V4H SH
 - GUI-based operation is supported
 - Can be used for development and evaluation
 - Suitable for desktop-style workflows on the board
 
-This guide walks you through setting up Ubuntu Desktop on the R-Car/V4H SH.
+This guide walks you through setting up Ubuntu Desktop on the R-Car V4H SH.
 
 Prerequisites
 """""""""""""
 
-- R-Car/V4H SH
+- R-Car V4H SH
 - SD card with the Ubuntu image flashed. Please refer to the :ref:`Quick Setup Guide <quick_setup_sh_guide>` for instructions on how to prepare the SD card.
 - Monitor and DisplayPort cable
 - Internet connection
@@ -25,26 +25,26 @@ Prerequisites
 Detailed Steps
 """"""""""""""
 
-The following sections provide detailed steps to set up and use the Ubuntu Desktop environment on the R-Car/V4H SH.
+The following sections provide detailed steps to set up and use the Ubuntu Desktop environment on the R-Car V4H SH.
 
 Hardware Connection
 ~~~~~~~~~~~~~~~~~~~
 
-Connect the R-Car/V4H SH to a monitor using the DisplayPort interface, and ensure that the board is powered on.
+Connect the R-Car V4H SH to a monitor using the DisplayPort interface, and ensure that the board is powered on.
 
-The following figure illustrates the typical desktop setup for the R-Car/V4H SH:
+The following figure illustrates the typical desktop setup for the R-Car V4H SH:
 
 .. figure:: ../../images/sh_with_monitor.png
-   :alt: R-Car/V4H SH Desktop Setup
+   :alt: R-Car V4H SH Desktop Setup
    :align: center
    :width: 800px
 
-   R-Car/V4H SH Desktop Setup
+   R-Car V4H SH Desktop Setup
 
 Boot the Board
 ~~~~~~~~~~~~~~
 
-- Insert the flashed SD card into the R-Car/V4H SH board.
+- Insert the flashed SD card into the R-Car V4H SH board.
 - Power on the board.
 
 Initial Boot and Login
@@ -130,7 +130,7 @@ Troubleshooting
 Switch from ``networkd`` to ``NetworkManager``
 """"""""""""""""""""""""""""""""""""""""""""""
 
-The default network manager for the Ubuntu image on R-Car/V4H SH is ``networkd``.
+The default network manager for the Ubuntu image on R-Car V4H SH is ``networkd``.
 
 If you want to switch to ``NetworkManager`` **to support graphical network management**, follow the steps below:
 
@@ -220,7 +220,7 @@ If you want to switch to ``NetworkManager`` **to support graphical network manag
 Limitations
 """""""""""
 
-The graphics stack used by Ubuntu Desktop on the R-Car/V4H SH is:
+The graphics stack used by Ubuntu Desktop on the R-Car V4H SH is:
 
 .. list-table::
    :header-rows: 1
