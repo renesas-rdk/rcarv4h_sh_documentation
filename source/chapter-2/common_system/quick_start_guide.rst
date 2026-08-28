@@ -5,7 +5,7 @@ The R-Car V4H SH uses Linux kernel |kernel_version| from the **R-Car Community t
 sources live in `linux-sh <https://github.com/renesas-rdk/linux-sh>`_. Every component is rebuilt
 on an **Ubuntu 24.04** host.
 
-Every input the board boots is built from source by the ``rcar-utils`` build scripts, which provide
+Every input the board boots is built from source by the `rcar-utils <https://github.com/renesas-rdk/rcar-utils>`_ build scripts, which provide
 one target per component:
 
 .. list-table::

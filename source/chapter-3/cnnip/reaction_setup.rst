@@ -82,13 +82,13 @@ Detailed Steps
       * - ``INSTALL_CEVA_CSL``
         - ``1``
         - ``0``
-        - The R-Car V4H SH platform does not support the CEVA DSP due to license restrictions,
-          so the automatic CEVA CSL installation is skipped.
+        - The CEVA DSP is not supported in this release on the R-Car V4H SH platform, so the
+          automatic CEVA CSL installation is skipped.
       * - ``INSTALL_CEVA_DSP``
         - ``1``
         - ``0``
-        - The R-Car V4H SH platform does not support the CEVA DSP due to license restrictions,
-          so the automatic CEVA DSP installation is skipped.
+        - The CEVA DSP is not supported in this release on the R-Car V4H SH platform, so the
+          automatic CEVA DSP installation is skipped.
       * - ``INSTALL_PY310_ON_BOARD``
         - ``1``
         - ``0``

@@ -74,14 +74,15 @@ Tasks
      - Compile with TVM and run on the x86 host CPU. Useful as an accuracy reference.
        ``convert_configs`` is not needed for this task.
    * - ``tvm_cch``
-     - Compile with TVM and run on CNN-IP + CPU of the board with the TVM runtime. No CEVA-SDT
-       license required, so this is the usual choice on the R-Car V4H SH platform.
+     - Compile with TVM and run on CNN-IP + CPU of the board with the TVM runtime. It does not
+       use the CEVA DSP, so this is the usual choice on the R-Car V4H SH platform.
    * - ``tvm_cdh``
-     - Compile with TVM and run on CNN-IP + CEVA DSP + CPU of the board. Requires a CEVA-SDT
-       license and is therefore not available on the R-Car V4H SH platform.
+     - Compile with TVM and run on CNN-IP + CEVA DSP + CPU of the board. The CEVA DSP is not
+       supported in this release, so this task is not available on the R-Car V4H SH platform.
    * - ``tvm_bundle``
-     - Compile the model into a standalone bundle covering all three compute units. Requires a
-       CEVA-SDT license and is therefore not available on the R-Car V4H SH platform.
+     - Compile the model into a standalone bundle covering all three compute units. It relies on
+       the CEVA DSP, which is not supported in this release, so this task is not available on the
+       R-Car V4H SH platform.
 
 Actions
 ~~~~~~~

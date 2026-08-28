@@ -83,6 +83,8 @@ The following image shows the top view of the R-Car V4H Sparrow Hawk (SH) board:
 
 For more details about the R-Car V4H SH specifications, visit the `R-Car Community Sparrow Hawk <https://rcar-community.github.io/Sparrow-Hawk/index.html#hardware>`_.
 
+The mirror documentation of the R-Car V4H SH hardware specifications is also available in the `docs/Retronix <https://github.com/renesas-rdk/rcarv4h_sh_documentation/tree/HEAD/docs/Retronix>`_ folder of this repository.
+
 Development Environment
 ^^^^^^^^^^^^^^^^^^^^^^^
 

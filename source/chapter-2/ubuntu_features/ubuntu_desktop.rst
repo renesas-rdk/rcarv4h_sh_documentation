@@ -246,7 +246,7 @@ must be started from inside the desktop session in order to inherit them.
 
    The set of workarounds may not be complete. Some applications may not work correctly, or may crash, due to missing features in the vendor driver.
 
-   Please report any issues for further support.
+   Please report any issues to the `GitHub repository's issues <https://github.com/renesas-rdk/rcarv4h_sh_documentation/issues>` for further support.
 
 What Runs on the GPU and on the CPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

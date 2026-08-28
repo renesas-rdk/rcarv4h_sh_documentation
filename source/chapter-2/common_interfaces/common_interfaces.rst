@@ -3,7 +3,7 @@ Ubuntu System with R-Car V4H SH
 
 This section provides usage information about the interfaces available on the R-Car V4H SH when running the Ubuntu system.
 
-For more details about specification of each interface, refer to the `Sparrow Hawk Hardware User's Manual <https://drive.google.com/file/d/1lqiRE7t8C6GWOmuj0PKMItuj-R3VaYD1/view>`_.
+For more details about specification of each interface, refer to the `SparrowHawk-Hardware_user's_manual_v015.pdf <https://github.com/renesas-rdk/rcarv4h_sh_documentation/tree/HEAD/docs/Retronix>`_.
 
 Overview
 ^^^^^^^^

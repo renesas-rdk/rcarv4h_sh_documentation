@@ -28,10 +28,10 @@ This interface is commonly used for high-resolution displays and touchscreens, p
 
 The following displays/adapters are supported:
 
-- Waveshare 13.3 MIPI DSI panel
-- RPi Display 2 5" MIPI DSI panel
-- RPi Display 2 7" MIPI DSI panel
-- Olimex MIPI-HDMI adapter
+- `Waveshare 13.3 MIPI DSI panel <https://www.waveshare.com/13.3inch-dsi-lcd.htm>`_
+- `RPi Display 2 5" MIPI DSI panel <https://www.raspberrypi.com/products/touch-display-2/>`_
+- `RPi Display 2 7" MIPI DSI panel <https://www.raspberrypi.com/products/touch-display-2/>`_
+- `Olimex MIPI-HDMI adapter <https://www.olimex.com/Products/IoT/ESP32-P4/MIPI-HDMI/open-source-hardware>`_
 
 .. _usb_uart:
 
