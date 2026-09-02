@@ -1,4 +1,6 @@
-Booting the board
+.. _sh_booting_the_board:
+
+Booting the Board
 ^^^^^^^^^^^^^^^^^
 
 At this point the IPL is already written to the board's serial flash ROM
@@ -10,7 +12,7 @@ Make sure **SW2** is still set to boot from the serial flash ROM, as described i
 flashing the IPL.
 
 Insert the microSD card, make sure the Power Control button (the green button near the USB PD port) is in the **OFF** position, connect
-the power supply to the board and press the button once so that it latches down to the **ON** position - the board now powers on.
+the power supply to the board and press the button once so that it latches down to the **ON** position — the board now powers on.
 
 Open a terminal emulator (e.g., **Tera Term**) and connect to the **ChA (HSCIF0)** port of the
 board, using the settings listed in :ref:`Serial console channels <sh_serial_console>`:
@@ -34,10 +36,10 @@ After powering on the board **for the first time**, perform the following steps:
 
    .. code-block:: bash
 
-      ping 8.8.8.8 -c 3
-      ping bing.com -c 3
+      ping -c 3 8.8.8.8
+      ping -c 3 bing.com
 
-   Perform apt update to verify that the board can reach the Ubuntu package repositories:
+   Then run ``apt update`` to verify that the board can reach the Ubuntu package repositories:
 
    .. code-block:: bash
 
@@ -55,7 +57,6 @@ After powering on the board **for the first time**, perform the following steps:
 
    .. code-block:: bash
 
-      sudo apt update
       sudo apt install parted
       sudo parted /dev/mmcblk0 resizepart 1 100%
       sudo resize2fs /dev/mmcblk0p1

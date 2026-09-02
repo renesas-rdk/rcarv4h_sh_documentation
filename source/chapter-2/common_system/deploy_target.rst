@@ -35,7 +35,7 @@ Copying Files from the Build Host to the Target Board
    untouched, no kernel module changes are produced. In that case ``./main_build.sh fitimage all``
    is the only build command needed, and only the rebuilt ``fitImage`` has to be copied.
 
-.. important::
+.. warning::
 
    Before overwriting any existing files on the target board, back up the current FIT image and
    kernel modules so that you can restore them if needed.
@@ -55,11 +55,20 @@ Set environment variables:
 
    export BUILD_USER=<build-host-user>
    export BUILD_HOST=<build-host-ip>
+   # Kernel release string of the build being deployed. Read it on the build host with
+   # "cat rcar-utils/linux-sh/include/config/kernel.release" (or from ${KERNEL_DIR} if you
+   # changed it in config.ini), or from the directory name under
+   # KERNEL_MODULES_OUTPUT_DIR/usr/lib/modules/. Do not use "uname -r" on the build host:
+   # that reports the host's own kernel, not the cross-built one.
+   export KREL=6.18.39-arm64-renesas
    # Absolute paths on the build host. Do not use "~": it would expand on the target board.
    export FIT_OUTPUT_DIR=/home/<build-host-user>/rcarv4h_workspace/rcar-utils/workspace/fitimage
    export KERNEL_MODULES_OUTPUT_DIR=/home/<build-host-user>/rcarv4h_workspace/rcar-utils/workspace/kernel-modules
 
 .. note::
+
+   ``KREL`` must match the kernel release of the build you are deploying, which is
+   |kernel_release| for the image described in this manual.
 
    ``FIT_OUTPUT_DIR`` and ``KERNEL_MODULES_OUTPUT_DIR`` refer to directories on the **build host**.
    The values above are the default layout, under the ``rcar-utils`` checkout; change them if you
@@ -88,8 +97,8 @@ is synchronized as a whole:
 .. code-block:: bash
 
    sudo rsync -avz --delete-during \
-     "${BUILD_USER}@${BUILD_HOST}:${KERNEL_MODULES_OUTPUT_DIR}/usr/lib/modules/6.18.39-arm64-renesas/" \
-     /usr/lib/modules/6.18.39-arm64-renesas/
+     "${BUILD_USER}@${BUILD_HOST}:${KERNEL_MODULES_OUTPUT_DIR}/usr/lib/modules/${KREL}/" \
+     /usr/lib/modules/${KREL}/
 
 **If you built only the in-tree modules** with ``./main_build.sh kernel modules-install``, the
 out-of-tree modules already installed on the board must be preserved:
@@ -99,10 +108,10 @@ out-of-tree modules already installed on the board must be preserved:
    sudo rsync -avz --delete-during \
      --exclude='extra/' \
      --exclude='updates/' \
-     "${BUILD_USER}@${BUILD_HOST}:${KERNEL_MODULES_OUTPUT_DIR}/usr/lib/modules/6.18.39-arm64-renesas/" \
-     /usr/lib/modules/6.18.39-arm64-renesas/
+     "${BUILD_USER}@${BUILD_HOST}:${KERNEL_MODULES_OUTPUT_DIR}/usr/lib/modules/${KREL}/" \
+     /usr/lib/modules/${KREL}/
 
-.. caution::
+.. warning::
 
    The ``extra/`` and ``updates/`` directories hold the out-of-tree kernel modules described in
    :ref:`Building the Out-of-Tree Kernel Modules <build_ext_modules>`. The ``kernel
@@ -145,7 +154,7 @@ After copying the files, update module dependencies on the target device:
 
 .. code-block:: bash
 
-   sudo depmod 6.18.39-arm64-renesas
+   sudo depmod ${KREL}
 
 Reboot the target board to apply the updated kernel, device tree, and modules:
 
@@ -177,18 +186,18 @@ If you changed the device tree, confirm that your change is visible in the live 
 
    ls /proc/device-tree/
 
-Recovering Files from an Unbootable SD Card
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Recovering Files from an Unbootable microSD Card
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If the target board can no longer boot or required files have been accidentally
-removed, you can restore the original files by mounting the SD card on a PC.
+removed, you can restore the original files by mounting the microSD card on a PC.
 
-1. Power off the target board and remove the SD card.
+#. Power off the target board and remove the microSD card.
 
-2. Insert the SD card into a Linux PC or another system that can access its
+#. Insert the microSD card into a Linux PC or another system that can access its
    partitions.
 
-3. Mount the root filesystem partition from the SD card:
+#. Mount the root filesystem partition from the microSD card:
 
    .. code-block:: bash
       :emphasize-lines: 3
@@ -202,14 +211,14 @@ removed, you can restore the original files by mounting the SD card on a PC.
       The microSD card image for the R-Car V4H SH uses a single partition that holds both ``/boot``
       and the root filesystem. Run ``lsblk`` to confirm the device name before mounting.
 
-4. Copy the original files back to the mounted partition. The key paths to restore, relative to
+#. Copy the original files back to the mounted partition. The key paths to restore, relative to
    ``/mnt/rootfs``, are ``/boot`` and |modules_path|.
 
-5. Safely unmount the partition:
+#. Safely unmount the partition:
 
    .. code-block:: bash
 
       sudo umount /mnt/rootfs
 
-6. Remove the SD card from the PC, reinsert it into the target board, and power
+#. Remove the microSD card from the PC, reinsert it into the target board, and power
    on the system.

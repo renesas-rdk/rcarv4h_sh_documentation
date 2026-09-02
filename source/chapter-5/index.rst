@@ -1,4 +1,4 @@
-Revision History
+Document History
 ================
 
 This section contains revision history for the R-Car V4H Sparrow Hawk.

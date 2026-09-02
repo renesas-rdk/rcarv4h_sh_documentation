@@ -1,10 +1,12 @@
+.. _reaction_config:
+
 REACTION Configuration
 """"""""""""""""""""""
 
 ``reaction.yaml`` is the entry point of every REACTION run. It describes one experiment: which
 model to use, which conversion and compilation path to follow, which target to run on, and what
 to measure. ``reaction start`` reads this file from the REACTION root directory
-(``/opt/rcar-xos/v3.xx.0/tools/hyco/reaction``) and drives the whole pipeline from it - ONNX
+(``/opt/rcar-xos/v3.xx.0/tools/hyco/reaction``) and drives the whole pipeline from it — ONNX
 export, quantization, TVM compilation for the CNN-IP, execution on the board over RPC, and the
 accuracy or latency report. Changing the flow therefore means editing the YAML file, not the
 command line.
@@ -56,6 +58,14 @@ Basic Structure
      - Target board: ``v4h2`` or ``v4m``. Use ``v4h2`` on the R-Car V4H SH platform.
    * - ``target_os``
      - Optional. Target operating system: ``linux`` (default) or ``qnx``.
+   * - ``weights``
+     - Path to the ONNX weights of a model that is not in the registry, relative to the REACTION
+       root directory. Given together with ``model_name`` used as a free alias; see
+       :ref:`Bringing Your Own Model <reaction_byom>`.
+   * - ``preprocess``
+     - Path to the pre-processing script that prepares the calibration images, relative to the
+       REACTION root directory. Given together with ``weights``; without it, random input is used
+       for quantization, which is enough for latency but not for accuracy.
 
 Tasks
 ~~~~~
@@ -109,13 +119,13 @@ Conversion Options
 
 ``convert_configs`` holds the per-stage options of the conversion pipeline, grouped by stage:
 
-- ``onnxruntime`` - ONNX export options such as ``opset_version``, ``input_shape``,
+- ``onnxruntime`` — ONNX export options such as ``opset_version``, ``input_shape``,
   ``input_names`` and ``output_names``, and the manual ``partition`` edges for layers that the
   compiler cannot handle and that must run in ONNX Runtime on the host CPU.
-- ``quantization`` - calibration settings such as ``calibration_method``, ``calib_data_root``
+- ``quantization`` — calibration settings such as ``calibration_method``, ``calib_data_root``
   and ``dataset_samples``, the data types ``weight_type`` and ``activation_type``, and
   ``nodes_to_exclude`` to keep selected nodes in floating point.
-- ``tvm`` - board connection (``host``, ``port``, ``user``, ``passwd``, ``rpc_server_auto``) and
+- ``tvm`` — board connection (``host``, ``port``, ``user``, ``passwd``, ``rpc_server_auto``) and
   compilation settings such as ``target``, ``opt_level``, ``timeout``, ``cnnip_batch_size`` and
   ``cnnip_skip_layers``.
 
@@ -137,11 +147,13 @@ A typical configuration only needs the board connection:
          passwd: ubuntu             # SSH password of the board
          rpc_server_auto: false     # The RPC server is started manually on the board
 
+.. _reaction_application_options:
+
 Application Options
 ~~~~~~~~~~~~~~~~~~~
 
 With ``action: app`` the model is not evaluated over the RPC server but built into a common
-application that runs standalone on the board, see :doc:`reaction_sample_app`. The ``tvm`` stage
+application that runs standalone on the board, see :ref:`REACTION Sample Application <reaction_sample_app>`. The ``tvm`` stage
 then takes a few additional keys:
 
 .. list-table:: Application Keys under ``convert_configs.tvm``
@@ -156,6 +168,7 @@ then takes a few additional keys:
    * - ``remove_input_quantize``
      - Remove the quantize node next to the input. ``true`` by default and required for the
        provided applications; the scale and zero-point are then taken from ``exec_config.json``.
+       See :ref:`Reading the Quantization Values from the Model <reading_quant_values>`.
    * - ``remove_output_dequantize``
      - Same for the dequantize node next to the output.
    * - ``skip_mean_quantization``
@@ -167,6 +180,8 @@ then takes a few additional keys:
    * - ``custom_node_config_path``
      - Path to the custom node configuration, needed by the ``custom_node`` applications. The
        files are under ``configs/custom_node/``.
+
+.. _reaction_exec_config:
 
 The ``exec_config.json`` File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -244,13 +259,16 @@ example below is the complete configuration of ``MobileNet_v1-app`` reduced to a
        visualization applications ``video_name`` and ``display_output``.
    * - ``inputs``
      - One entry per input node. ``file`` for a single image or ``folder`` for continuous input,
-       plus the ``quantize`` ``scale`` and ``zero`` of the removed input quantize node.
+       plus the ``quantize`` ``scale`` and ``zero`` of the removed input quantize node. The paths
+       are resolved from the directory the application is launched in on the board, so they carry
+       the application folder name, as in ``mobilenet_v1-app/test_data/cat.jpg``.
    * - ``outputs``
      - One entry per output node, with the ``dequantize`` ``scale`` and ``zero`` of the removed
        output dequantize node.
    * - ``models``
-     - One entry per model library: ``file`` is the path of the ``.so`` or ONNX file relative to
-       the application folder, ``runtime`` is ``tvm`` or ``onnx``.
+     - One entry per model library: ``file`` is the path of the ``.so`` or ONNX file, written the
+       same way as the ``inputs`` paths (``mobilenet_v1-app/models/model_dsp0.so``), ``runtime``
+       is ``tvm`` or ``onnx``.
    * - ``connections``
      - Wiring between the three blocks above, see below.
    * - ``threads``
@@ -293,8 +311,9 @@ freely, but ``workers`` has to be at the root when it is used:
      - Several independent threads, each finishing on its own. For identical pipelines on
        different frames, for example four ``{ "steps": [ "dspN", "postN" ] }`` entries.
 
-Keep ``frame_per_loop`` and the number of entries in ``models`` aligned with ``threads``: in the
-simple case of one input and unsplit models, all three have the same value.
+Keep ``frame_per_loop`` and the number of entries in ``models`` aligned with
+``compile-opts.threads``: in the simple case of one input and unsplit models, all three have the
+same value.
 
 The ``CMakeLists.txt`` File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -310,7 +329,7 @@ entry per model, and those entries have to match the ``file`` entries of the ``m
    model(model_dsp2)
    model(model_dsp3)
 
-The provided applications are built for four threads, one library per DSP core. Reducing the
+The provided applications are built for four threads, one model library per thread. Reducing the
 application to a single thread therefore means keeping a single entry:
 
 .. code-block:: cmake
@@ -343,7 +362,7 @@ step of the execution:
        log_level: DEBUG
 
 The additional logs appear on the terminal and in
-``work_dir/<name>/tvm-v4x/<task>/conversion.log`` and ``validation.log``.
+``work_dir/<experiment_name>/tvm-v4h2/<task>/conversion.log`` and ``validation.log``.
 
 .. tip::
 

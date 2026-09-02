@@ -1,3 +1,5 @@
+.. _reaction_byom:
+
 Bringing Your Own Model
 """""""""""""""""""""""
 
@@ -11,8 +13,8 @@ Prepare the Scripts
 
 Two Python scripts are needed alongside the ONNX model:
 
-- ``preprocess.py`` - prepares the calibration images used during quantization.
-- ``accuracy_validation.py`` - runs post-processing and computes the accuracy metric.
+- ``preprocess.py`` — prepares the calibration images used during quantization.
+- ``accuracy_validation.py`` — runs post-processing and computes the accuracy metric.
 
 Templates for both are provided in the ``model-input-package-<ver>.tar.bz2`` add-on package.
 
@@ -30,6 +32,14 @@ Register the model with ``reaction bond``, which asks for the model name, weight
 
    # Run this command from the activated environment, in the REACTION root directory
    reaction bond --with-docker
+
+.. note::
+
+   This registration step belongs to the Docker-based installation. In a Docker-free
+   installation ``reaction bond`` is deprecated and no registration takes place: use any alias
+   in ``model_name`` and point ``weights`` and ``preprocess`` at the files directly in
+   ``reaction.yaml``, as in the example below, then run the accuracy script with
+   ``reaction with``.
 
 The command prompts for the model name, the ONNX weights, the pre-processing script, the
 packages needed to compute accuracy, the compute type (``cpu``/``gpu``) and the device
@@ -66,7 +76,7 @@ Reference the registered model in ``reaction.yaml``:
 .. code-block:: yaml
 
    experiment:
-     model_name: hardnet68ds-ptq        # Name given during registration
+     model_name: hardnet68ds-ptq        # Registered name, or any alias in a Docker-free installation
      weights: models/hardnet68ds/hardnet68ds-fp32.onnx
      preprocess: models/hardnet68ds/preprocess.py
      task: tvm_cch
@@ -95,6 +105,7 @@ instead:
 
 .. code-block:: bash
 
+   # Run this command from the activated environment, in the REACTION root directory
    reaction with python3 models/hardnet68ds/accuracy_validation.py \
       -onnx models/hardnet68ds/hardnet68ds-fp32.onnx -ra tvm
 
@@ -111,12 +122,12 @@ Run the Model as an Application on the Board
 
 The evaluation above runs the model through the TVM RPC server, one inference at a time. To let
 the model run on the board on its own, with pipelining across threads, build it
-into a common application. See :doc:`reaction_sample_app` for a walk-through with one of the
+into a common application. See :ref:`REACTION Sample Application <reaction_sample_app>` for a walk-through with one of the
 provided sample applications; the steps for a custom model are the same, with an extra
 registration. The board itself also has to be prepared once for this flow, see
-:ref:`Board Setup <board-app-setup>`.
+:ref:`Board Setup <board_app_setup>`.
 
-**Step 1 - Prepare the model folder**
+**Step 1: Prepare the model folder**
 
 Create a folder for the model under ``models`` in the REACTION root directory:
 
@@ -133,17 +144,19 @@ Create a folder for the model under ``models`` in the REACTION root directory:
 The ``MobileNet_v1-app`` folder from the ``model-input-package-<ver>.tar.bz2`` add-on package
 serves as the reference for all four files:
 
-- ``exec_config.json`` - adjust the quantization values to those of the custom model, and the
-  input path if custom test data is used. See :doc:`reaction_config` for the blocks of this file.
-- ``CMakeLists.txt`` - can be used as it is, as long as the ``model()`` entries match the
+- ``exec_config.json`` — adjust the quantization values to those of the custom model, and the
+  input path if custom test data is used. See :ref:`REACTION Configuration <reaction_config>` for the blocks of this file,
+  and :ref:`Reading the Quantization Values from the Model <reading_quant_values>` for how to read
+  the scales and zero points out of the quantized ONNX file.
+- ``CMakeLists.txt`` — can be used as it is, as long as the ``model()`` entries match the
   ``models`` block of ``exec_config.json``.
-- ``modified_config.json`` - optional, ``RenesasUserConfig.json`` is used when it is absent.
-- ``prepostproc.cc`` - has to be adapted to what the custom model expects and returns.
+- ``modified_config.json`` — optional, ``RenesasUserConfig.json`` is used when it is absent.
+- ``prepostproc.cc`` — has to be adapted to what the custom model expects and returns.
 
 The quantized model must keep the ``_quant.onnx`` suffix. Copy it from
 ``work_dir/<experiment_name>/quant/``.
 
-**Step 2 - Register the application model**
+**Step 2: Register the application model**
 
 Append a line for the model to ``register/application/config/app_models_requirements.csv``:
 
@@ -151,9 +164,9 @@ Append a line for the model to ``register/application/config/app_models_requirem
 
    ,OD,<CustomModelName>,,models/<CustomModelName>/<CustomModelName>_quant.onnx,not_available=True,,,,,,,custom,,
 
-**Step 3 - Define the test data (optional)**
+**Step 3: Define the test data (optional)**
 
-Without this step the test data of ``MobileNet_v1-app`` is used. To use own images, add a set to
+Without this step the test data of ``MobileNet_v1-app`` is used. To use your own images, add a set to
 ``reaction/app/app.py`` and map the model to it:
 
 .. code-block:: python
@@ -174,7 +187,7 @@ Without this step the test data of ``MobileNet_v1-app`` is used. To use own imag
 
    The key in ``image_list`` must be the model name in **all lowercase**.
 
-**Step 4 - Configure and run**
+**Step 4: Configure and run**
 
 Switch ``reaction.yaml`` to the application flow. Only ``action: app`` is supported here, and
 the TVM RPC server is not used at all:
@@ -203,7 +216,7 @@ the TVM RPC server is not used at all:
 
 REACTION compiles the model, builds the executable, copies everything to the board, runs it
 there and prints the performance metrics. The generated files and the board log are kept under
-``work_dir/<model_name>/tvm-<device>/common_application``.
+``work_dir/<model_name>/tvm-v4h2/common_application``.
 
 .. tip::
 

@@ -22,7 +22,7 @@ You may be hitting this issue if your build fails during ``cross-colcon-build`` 
 Common signs include:
 
 - the error points to a file inside ``/opt/arm64_sysroot/.../cmake/...``,
-- the message says that an imported target references a file that does not exist, but you already verified that the file exists in the sysroot, and
+- the message says that an imported target references a file that does not exist, but you already verified that the file exists in the sysroot,
 - the missing file path starts with an absolute path such as ``/opt/ros/${ROS_DISTRO}`` or ``/usr/lib/...``, and
 - the failing package is found by ``find_package()`` in CMake.
 
@@ -217,11 +217,13 @@ In that case, inspect the actual file again and adjust the rule.
 Step 6: Apply the fix
 ~~~~~~~~~~~~~~~~~~~~~
 
-Once the dry run looks correct, apply the fix:
+Once the dry run looks correct, apply the fix to the same package:
 
 .. code-block:: bash
 
-   sysroot-fix
+   sudo -E /usr/local/bin/sysroot-fix <package_name>
+
+Omit ``<package_name>`` to apply every rule in both YAML files.
 
 Or rerun the usual command:
 

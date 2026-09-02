@@ -3,7 +3,7 @@ Overview
 
 `Sparrow Hawk (SH) <https://www.renesas.com/en/design-resources/partners/retronix/sparrow-hawk-r-car-v4h-high-performance-ai-single-board-computer-sbc>`_
 is a compact and highly expandable edge AI development board. Powered by the Renesas R-Car V4H System-on-Chip (SoC) with 4 Arm® Cortex®-A76 cores and 3 Arm Cortex-R52 cores,
-along with an integrated Image Signal Processor (ISP), its built-in AI engine delivers up to 30 TOPS (Tera Operations Per Second) Dense deep learning performance,
+along with an integrated Image Signal Processor (ISP), its built-in AI engine delivers 29.5 TOPS (Tera Operations Per Second) of dense deep learning performance,
 while the Imagination Technologies PowerVR AXM-8-256 (GPU) achieves over 150 GFLOPS of computing power.
 
 Software Environment
@@ -25,7 +25,8 @@ Software Environment
 Hardware Environment
 ^^^^^^^^^^^^^^^^^^^^
 
-**R-Car V4H SH Board View:**
+R-Car V4H SH Board View
+"""""""""""""""""""""""
 
 The following image shows the top view of the R-Car V4H Sparrow Hawk (SH) board:
 

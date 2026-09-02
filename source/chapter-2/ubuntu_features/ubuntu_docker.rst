@@ -3,13 +3,6 @@ Docker with Ubuntu on R-Car V4H SH
 
 Docker is available on Ubuntu for container-based development and deployment.
 
-Main points:
-
-- Install and run Docker on Ubuntu
-- Build and run containers for applications
-- Useful for packaging development environments
-- Helps with reproducible workflows
-
 This guide explains how to install and verify Docker on the R-Car V4H SH running Ubuntu.
 
 Prerequisites
@@ -28,7 +21,7 @@ Follow the steps below to install Docker on the R-Car V4H SH:
    sudo apt update
 
    # Make sure you can access the internet
-   ping bing.com
+   ping -c 4 bing.com
 
    # Install Docker
    curl -fsSL https://get.docker.com | sudo sh
@@ -63,5 +56,5 @@ Troubleshooting
 """""""""""""""
 
 - If ``apt update`` fails, verify network connectivity.
-- If ``ping bing.com`` fails, check DNS and internet access.
+- If ``ping -c 4 bing.com`` fails, check DNS and internet access.
 - If you get a permission error when running Docker commands, confirm that your user was added to the ``docker`` group and that you have logged in again.

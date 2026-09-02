@@ -120,7 +120,12 @@ def fix_ordered_list_continuations(content):
                         ends_item = _closes_enclosing(lines[i], open_blocks, in_code, depth) or (
                             at_own_level and (
                                 re.match(r'^\.{1,5}\s+\S', lines[i]) or
-                                re.match(r'^={1,6}\s+\S', lines[i])
+                                re.match(r'^={1,6}\s+\S', lines[i]) or
+                                # A block anchor belongs to whatever follows it, not to the
+                                # item being closed.  Without this the '--' closer lands after
+                                # the anchor and orphans it, which turns every cross-reference
+                                # to that label into a dead link in the PDF.
+                                re.match(r'^\[\[[^\]]+\]\]\s*$', lines[i])
                             )
                         )
                         if ends_item:
@@ -154,10 +159,65 @@ def fix_ordered_list_continuations(content):
 # Empty Title Removal
 # ============================================================
 
+def protect_code_spans(content):
+    """
+    Inline `code` spans still run AsciiDoc's `replacements` substitution, so a
+    literal '->' becomes an arrow and '...' becomes an ellipsis - both of which
+    stop the reader from copying the text out of the PDF.  Wrapping the span in
+    '+' passes it through verbatim.
+
+    Every backtick pair is consumed, not just the interesting ones: matching
+    only the spans that contain '->' would let the regex pair the *closing*
+    backtick of one span with the *opening* backtick of the next and wrap the
+    prose between them.  Listing blocks are skipped, where backticks are
+    literal text and no substitution runs anyway.
+    """
+    span = re.compile(r'`([^`\n]*)`')
+
+    def wrap(match):
+        inner = match.group(1)
+        if ('->' in inner or '...' in inner) and '+' not in inner:
+            return '`+' + inner + '+`'
+        return match.group(0)
+
+    out, in_code = [], False
+    for line in content.split('\n'):
+        if line.strip() == '----':
+            in_code = not in_code
+            out.append(line)
+            continue
+        out.append(line if in_code else span.sub(wrap, line))
+
+    return '\n'.join(out)
+
+
+def separate_glued_lists(content):
+    """
+    Pandoc emits a nested list directly after the paragraph that introduces it.
+    AsciiDoc then absorbs the markers into that paragraph, so the bullets show up
+    as literal '*' in the middle of a run-on sentence.  Re-insert the blank line
+    that separates the two.
+    """
+    item = re.compile(r'^(\*{1,5}|\.{1,5})\s+\S')
+    out, in_code = [], False
+
+    for line in content.split('\n'):
+        if line.strip() == '----':
+            in_code = not in_code
+        if (not in_code and out and out[-1].strip()
+                and item.match(line) and not item.match(out[-1])
+                and not re.match(r'^[-=_+|\[.]', out[-1].strip())):
+            out.append('')
+        out.append(line)
+
+    return '\n'.join(out)
+
+
 def remove_empty_titles(content):
     """
     Remove titles (== ... ) that have no content below them.
-    Keep a title only if it is followed by actual content (not another title or EOF).
+    Keep a title only if it is followed by actual content, or by a *deeper*
+    title - a section whose first child is a subsection is not empty.
     """
     lines = content.split('\n')
     result = []
@@ -174,9 +234,15 @@ def remove_empty_titles(content):
             while j < len(lines) and lines[j].strip() == '':
                 j += 1
 
-            # Check whether the next non-blank line is content or another title
-            if j < len(lines) and not re.match(r'^={1,6}\s+\S', lines[j]):
-                # There is content — keep the title
+            # Check whether the next non-blank line is content or another title.
+            # A title followed by a deeper title still owns that subsection, so
+            # only a same-level or shallower title (or EOF) means "empty".
+            next_title = re.match(r'^(={1,6})\s+\S', lines[j]) if j < len(lines) else None
+            this_title = re.match(r'^(={1,6})\s+\S', line)
+            if j < len(lines) and (
+                not next_title or len(next_title.group(1)) > len(this_title.group(1))
+            ):
+                # There is content, or a subsection — keep the title
                 result.append(line)
             else:
                 # No content (EOF or another title immediately after) — skip
@@ -618,6 +684,12 @@ toc::[]
 
     # Fix ordered list '+' continuations that break with nested content
     content = fix_ordered_list_continuations(content)
+
+    # Re-separate lists Pandoc glued to their introducing paragraph
+    content = separate_glued_lists(content)
+
+    # Keep '->' and '...' verbatim inside inline code spans
+    content = protect_code_spans(content)
 
     # Fix image paths: ../images/, ../../images/, and ../../../images/ -> source/images/
     content = re.sub(

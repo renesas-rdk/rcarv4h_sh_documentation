@@ -9,6 +9,13 @@ tables in this section whenever they ask you to change a switch position.
 
 SW2 is an 8-position DIP switch. Each position drives one mode pin (MD) of the R-Car V4H SoC:
 
+.. figure:: ../../images/sw2.png
+   :alt: SW2 DIP switch
+   :align: center
+   :width: 700px
+
+   SW2 DIP switch
+
 .. list-table:: SW2 Pin Assignment
    :header-rows: 1
    :widths: 12 15 73

@@ -268,6 +268,17 @@ worth changing:
    * - ``CMEM_BSIZE``
      - Memory reserved for ``cmemdrv``, written to ``modprobe.d`` as
        ``options cmemdrv bsize=...``.
+   * - ``KERNEL_VARIANT``
+     - Builds a second kernel from the same source tree with
+       ``local-build-scripts/kernel-config/<name>.config`` merged last, so it can override
+       anything the board configuration set. Shipped commented out; ``preempt-rt``
+       (``CONFIG_PREEMPT_RT=y``) is the only variant provided. Set it per run, and give the
+       variant its own ``WORKSPACE_DIR`` so its ``fitImage`` and modules stay apart from the
+       stock build's:
+
+       .. code-block:: bash
+
+          KERNEL_VARIANT=preempt-rt ./main_build.sh kernel modules-install
 
 The rest are best left as they are shipped: ``PLATFORM`` accepts only ``RCAR-V4H-SH`` on this
 branch, ``FIT_ITS`` points at a hand-written image tree source instead of the generated one, and

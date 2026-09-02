@@ -1,3 +1,5 @@
+.. _remote_debug:
+
 ROS 2 Application Remote Debugging
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -12,11 +14,11 @@ It covers the required setup, the debugging workflow, and practical notes for ru
 Prerequisites
 """""""""""""
 
-#. Complete the :ref:`Cross compilation environment setup <requirements_ros2_cross_build>` section.
+#. Complete the :ref:`Cross-compilation Environment Setup <requirements_ros2_cross_build>` section.
 
    Make sure VS Code is configured with the required extensions and workspace settings for ROS 2 development, and that the application has been successfully deployed to the R-Car V4H SH platform.
 
-#. Make sure the required :ref:`variables <workspace_settings>` in ``settings.json`` are configured correctly, especially: ``TARGET_IP``
+#. Make sure the required :ref:`variables <workspace_settings>` in ``settings.json`` are configured correctly, especially ``TARGET_IP``.
 
 #. Ensure that all runtime dependencies required by the application are installed on the target device.
 
@@ -56,15 +58,19 @@ Debugging Workflow
 
    - If prompted, enter any required runtime arguments, such as ROS 2 parameters.
 
-#. Press ``F5`` (or click the green **Start Debugging** arrow) to begin the remote debugging session. The corresponding pre-launch task runs automatically before the debugger attaches.
+#. Press ``F5`` (or click the green **Start Debugging** arrow) to begin the remote debugging
+   session. Each debug configuration runs a pre-launch task automatically before the debugger
+   attaches, and that task is what starts ``gdbserver`` on the board:
 
-   - For **ROS2: Debug Run (GDB)**, the following command is executed on the target device:
+   - The **GDB for ROS2 Run** configuration runs the **ROS2: Debug Run (GDB)** task, which
+     executes the following command on the target device:
 
      .. code-block:: bash
 
         ros2 run --prefix 'gdbserver localhost:<debug_port>' <package_name> <executable_name>
 
-   - For **ROS2: Debug Launch (GDB)**, the following command is executed on the target device:
+   - The **GDB for ROS2 Launch** configuration runs the **ROS2: Debug Launch (GDB)** task,
+     which executes the following command on the target device:
 
      .. code-block:: bash
 

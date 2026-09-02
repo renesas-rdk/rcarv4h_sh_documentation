@@ -1,5 +1,5 @@
-High-Speed Interface
-^^^^^^^^^^^^^^^^^^^^
+High-Speed Interfaces
+^^^^^^^^^^^^^^^^^^^^^
 
 The R-Car V4H SH is equipped with several high-speed interfaces that enable users to connect a variety of peripherals and expansion modules.
 
@@ -22,9 +22,9 @@ For example, you can connect a PCIe NVMe SSD to enhance storage performance. The
   #. Insert the M.2 NVMe SSD into the **CN5 M.2 Key-M slot** on the R-Car V4H SH.
   #. Power on the R-Car V4H SH.
 
-.. important::
+.. caution::
 
-   - Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
+   Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
 
 Usage example with pciutils:
 
@@ -94,11 +94,15 @@ The R-Car V4H SH features dual MIPI-CSI connectors that support camera input for
 
 .. note::
 
-   #. Currently, only the **Raspberry Pi Camera V2 and Raspberry Pi Camera V3** are supported.
+   #. The **Raspberry Pi Camera V2** (IMX219), the **Raspberry Pi Camera V3** (IMX708) and
+      **IMX462**-based modules are supported. The bootloader probes J1 and J2 and applies the
+      matching camera overlay automatically; see
+      :ref:`Device Tree Overlay <device_tree_overlay>`.
    #. The Raspberry Pi Camera V3 is currently under development on mainline Linux and libcamera, so at this stage the image may appear dark and features such as auto-focus are not yet supported.
       In addition, recognition may occasionally fail.
    #. The board connector has 22 pins, so a 15-pin-to-22-pin conversion cable is required.
-   #. When using the Raspberry Pi Camera V2, the following cable is required: https://www.raspberrypi.com/products/camera-cable/
+   #. When using the Raspberry Pi Camera V2, a `Raspberry Pi camera cable
+      <https://www.raspberrypi.com/products/camera-cable/>`_ is required.
 
 Set up the MIPI-CSI interface
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,7 +118,7 @@ Connect Raspberry Pi Camera V2 and/or Raspberry Pi Camera V3 to J1 and/or J2 con
 
 .. note::
 
-   The following example commands and output is for the Raspberry Pi Camera V3.
+   The following example commands and output are for the Raspberry Pi Camera V3.
    The Raspberry Pi Camera V2 is also supported, but the output may differ slightly.
 
 The J1/J2 cameras are driven by libcamera, not by a plain ``/dev/video`` node.
@@ -202,12 +206,12 @@ To test network connectivity to an external server, use the ``ping`` command:
    ping -c 4 bing.com
    ping -c 4 8.8.8.8
 
-Set a static IP address
+Set a Static IP Address
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 In Ubuntu, the network is configured with Netplan. If you need to set a static IP address for the Ethernet interface, for example ``169.254.43.99``, follow these steps:
 
-- Open the network configuration file with ``vim``:
+- Open the network configuration file with ``vi``:
 
   .. code-block:: bash
 
@@ -308,7 +312,7 @@ The R-Car V4H SH includes two USB 3.0 Type-A ports and two USB 3.0 Type-C ports 
 
 To use these devices, simply connect them to the USB 3.0 Type-A or Type-C ports.
 
-Verify USB 3.0 functionality
+Verify USB 3.0 Functionality
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To verify that the USB 3.0 ports are functioning correctly, you can use the following command to list USB devices and check their connection speed:
@@ -333,10 +337,10 @@ Example output:
    /:  Bus 002.Port 001: Dev 001, Class=root_hub, Driver=xhci-pci-renesas/4p, 5000M
       |__ Port 002: Dev 002, If 0, Class=Hub, Driver=hub/4p, 5000M
 
-USB-WIFI Adapter Support
-~~~~~~~~~~~~~~~~~~~~~~~~
+USB Wi-Fi Adapter Support
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following USB-WIFI adapters have been tested and are compatible with the R-Car V4H SH:
+The following USB Wi-Fi adapters have been tested and are compatible with the R-Car V4H SH:
 
 - Ralink Technology, Corp. MT7601U Wireless Adapter
 - AC1300 TP-Link T3U Nano
@@ -344,13 +348,13 @@ The following USB-WIFI adapters have been tested and are compatible with the R-C
 
 .. note::
 
-   If you want to use a different USB WiFi adapter, make sure the required driver is available for the R-Car V4H SH.
+   If you want to use a different USB Wi-Fi adapter, make sure the required driver is available for the R-Car V4H SH.
 
-   You need to identify the appropriate driver for the USB WiFi adapter and enable it in the Linux kernel configuration file. For example, add ``CONFIG_MT7601U=y`` to ``linux-sh/arch/arm64/configs/sparrow_hawk.config``, then rebuild and deploy the kernel image.
+   You need to identify the appropriate driver for the USB Wi-Fi adapter and enable it in the Linux kernel configuration file. For example, add ``CONFIG_MT7601U=y`` to ``linux-sh/arch/arm64/configs/sparrow_hawk.config``, then rebuild and deploy the kernel image.
 
    Refer to the :ref:`Custom Linux Kernel and Device Tree <build_kernel>` section for instructions on how to add support for additional drivers by modifying the Linux kernel.
 
-Usage example
+Usage Example
 ~~~~~~~~~~~~~
 
 - Install necessary packages
@@ -362,7 +366,7 @@ Usage example
 
 - Check USB devices
 
-  First, connect the USB-WIFI adapter to the R-Car V4H SH.
+  First, connect the USB Wi-Fi adapter to the R-Car V4H SH.
 
   Then, run the following command to list all connected USB devices:
 
@@ -372,7 +376,7 @@ Usage example
 
   Example output:
 
-  .. code-block:: bash
+  .. code-block:: console
      :emphasize-lines: 4,6
 
      Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
@@ -390,52 +394,52 @@ Usage example
 
   Example output:
 
-  .. code-block:: bash
+  .. code-block:: console
 
      7: wlx98ba5f1918cf: <BROADCAST,MULTICAST,DYNAMIC> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
 
-- Unlock the WiFi interface (if necessary)
+- Unlock the Wi-Fi interface (if necessary)
 
   .. code-block:: bash
 
-     sudo rfkill list wifi                # Check if the WiFi interface is blocked
-     sudo rfkill unblock wifi             # If it is blocked, unblock the WiFi interface
-     sudo rfkill list wifi                # Verify that the WiFi interface is now unblocked
+     sudo rfkill list wifi                # Check if the Wi-Fi interface is blocked
+     sudo rfkill unblock wifi             # If it is blocked, unblock the Wi-Fi interface
+     sudo rfkill list wifi                # Verify that the Wi-Fi interface is now unblocked
 
   Example output:
 
-  .. code-block:: bash
+  .. code-block:: console
 
      0: phy0: Wireless LAN
         Soft blocked: no
         Hard blocked: no
 
-- Bring up the WiFi interface
+- Bring up the Wi-Fi interface
 
   .. code-block:: bash
 
-     sudo ip link set wlx98ba5f1918cf up  # Bring up the WiFi interface
+     sudo ip link set wlx98ba5f1918cf up  # Bring up the Wi-Fi interface
      ip a | grep wl                       # Check the interface status again
 
   Example output:
 
-  .. code-block:: bash
+  .. code-block:: console
 
      7: wlx98ba5f1918cf: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
 
-- Scan for available WiFi networks
+- Scan for available Wi-Fi networks
 
   .. code-block:: bash
 
      sudo iw dev wlx98ba5f1918cf scan | grep "<YOUR_SSID>"
 
-- Modify network configuration to connect to the WiFi network by editing the Netplan configuration file:
+- Modify network configuration to connect to the Wi-Fi network by editing the Netplan configuration file:
 
   .. code-block:: bash
 
      sudo vi /etc/netplan/50-cloud-init.yaml
 
-  Add the following configuration to connect to the WiFi network (replace ``MY_SSID`` and ``MY_PASSWORD`` with your actual WiFi SSID and password):
+  Add the following configuration to connect to the Wi-Fi network (replace ``MY_SSID`` and ``MY_PASSWORD`` with your actual Wi-Fi SSID and password):
 
   .. code-block:: yaml
 
@@ -466,7 +470,7 @@ Usage example
 
   Example output:
 
-  .. code-block:: bash
+  .. code-block:: console
 
      PING bing.com (150.171.27.10) from 192.168.19.177 wlx98ba5f1918cf: 56(84) bytes of data.
      64 bytes from 150.171.27.10: icmp_seq=1 ttl=120 time=420 ms

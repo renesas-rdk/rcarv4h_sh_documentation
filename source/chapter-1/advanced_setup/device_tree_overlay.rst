@@ -5,14 +5,14 @@ Device Tree Overlay
 
 A device tree overlay (DTO) is a fragment of device tree that is merged into the base device tree
 before the kernel starts. It can add, remove, or modify nodes and properties, which makes it
-possible to describe an optional piece of hardware - a camera module, a display panel, a fan -
+possible to describe an optional piece of hardware — a camera module, a display panel, a fan —
 without maintaining a separate device tree for every possible combination.
 
 On the R-Car V4H SH, overlays are shipped inside ``/boot/fitImage`` and are selected by U-Boot at
 boot time. In the normal case the selection is automatic: the board detects what is connected and
 applies the matching overlays, so you do not have to configure anything.
 
-How overlays are delivered
+How Overlays Are Delivered
 """"""""""""""""""""""""""
 
 Every overlay is packaged into ``fitImage`` as its own FIT *configuration*. A configuration is
@@ -34,7 +34,7 @@ combined:
    supported way to apply one is to name its configuration in the ``bootm`` command line, as shown
    above.
 
-Boot flow
+Boot Flow
 """""""""
 
 The configuration string is assembled at boot time by ``boot.cmd``, a U-Boot script that is itself
@@ -47,7 +47,7 @@ packaged inside ``fitImage``:
           ├─ setenv bootargs "rw root=<device> rootwait"
           ├─ load <interface> 0:1 ${loadaddr} /boot/fitImage
           └─ source ${loadaddr}:script              → executes boot.cmd from inside fitImage
-               ├─ probes the I2C buses to detect cameras, display and fan
+               ├─ probes the I2C buses to detect cameras and the display, and reads the fan variable
                ├─ derives the base configuration from root= in bootargs
                └─ bootm ${loadaddr}${conf}
 
@@ -66,7 +66,7 @@ Just before booting, ``boot.cmd`` echoes the command it is about to run, for exa
    That line is the single best place to start when a peripheral does not come up. It shows
    exactly which overlays were selected on this boot.
 
-Available configurations
+Available Configurations
 """"""""""""""""""""""""
 
 ``fitImage`` contains two kinds of configuration. ``default`` and ``initramfs`` are the bootable
@@ -108,7 +108,7 @@ and always has to follow one of the two.
      - Aliases of ``rpi-display-2-7in`` and ``ws-display-13in``, kept for backward compatibility.
        Use the explicit names in new work.
 
-Automatic detection
+Automatic Detection
 """""""""""""""""""
 
 ``boot.cmd`` probes the I2C buses and the boot arguments, and builds the configuration string from
@@ -143,20 +143,44 @@ the result:
      - Same three rules, on bus 2
      - ``#j2-imx219`` / ``#j2-imx708`` / ``#j2-imx462``
    * - Display J4
-     - Panel answers at ``0x5d`` behind the I2C mux, identification byte ``0x41``
+     - On bus 0, after the mux at ``0x71`` is switched to channel ``0x07`` and the bus is
+       slowed to 100 kHz: the panel controller at ``0x45`` answers and is power-cycled, then
+       the touch controller at ``0x5d`` reports config version ``0x41``
      - ``#rpi-display-2-7in``
    * - Display J4
-     - Same, identification byte ``0x42``
+     - Same, config version ``0x42``
      - ``#rpi-display-2-5in``
    * - Display J4
-     - Device answers at ``0x41``
+     - ``0x45`` answers and a device also answers at ``0x41``. This check runs after the
+       ``0x5d`` check, so it wins when both match
      - ``#ws-display-13in``
    * - Display J4
-     - No panel at ``0x45``, but the LT8912B answers at ``0x48``
+     - Nothing answers at ``0x45``, but the LT8912B answers at ``0x48``
      - ``#olimex-dsi-hdmi``
+   * - Display J4
+     - Nothing answers at ``0x45`` or ``0x48``, or ``0x45`` answers but neither a config
+       version of ``0x41``/``0x42`` nor a device at ``0x41`` is found
+     - None. No display overlay is applied.
    * - Fan
-     - An Argon40 fan answers on bus 3
-     - ``#fan-argon40``, otherwise ``#fan-pwm``
+     - The ``fan`` U-Boot environment variable is set to ``argon40`` **and** a device answers at
+       ``0x1a`` on bus 3
+     - ``#fan-argon40``
+   * - Fan
+     - The ``fan`` variable is set to ``pwm``. No hardware is probed.
+     - ``#fan-pwm``
+
+.. note::
+
+   Fan selection is driven by the ``fan`` U-Boot environment variable, which ``boot.cmd`` never
+   sets itself. Set it once from the U-Boot prompt so the selection is explicit:
+
+   .. code-block:: bash
+
+      setenv fan pwm      # or: setenv fan argon40
+      saveenv
+
+   The ``bootcmd:`` line echoed just before booting shows which fan overlay was actually
+   selected.
 
 The configurations are always assembled in this fixed order:
 
@@ -168,4 +192,4 @@ Because overlays are applied from left to right, a later one can override proper
 earlier one, and anything you add through ``conf_append`` is applied last.
 
 To create a new overlay or change which overlays are packaged into ``fitImage``, refer to
-:ref:`Building the FIT image <build_fitimage>`.
+:ref:`Building the FIT Image <build_fitimage>`.

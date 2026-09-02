@@ -5,7 +5,7 @@ Cross-compilation Environment Setup
 
 This section provides instructions on how to set up the cross-compilation environment for building ROS 2 applications for the R-Car V4H SH platform.
 
-Host machine requirements
+Host Machine Requirements
 """""""""""""""""""""""""
 
 Supported host operating systems:
@@ -25,19 +25,19 @@ The following image shows the expected setup for cross-building applications for
 
 Make sure your board and host machine are properly set up and connected to the same network to enable communication between them during development and deployment.
 
-Software requirements on the host machine
+Software Requirements on the Host Machine
 """""""""""""""""""""""""""""""""""""""""
 
 This section describes the required software on the host machine and how to set up and access the Docker-based cross-compilation environment.
 
-Required software
+Required Software
 ~~~~~~~~~~~~~~~~~
 
 - `Docker <https://docs.docker.com/engine/install/ubuntu/>`_ installed on the host machine.
 - `VS Code <https://code.visualstudio.com/download>`_ for code editing and development.
 - `Dev Containers extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`_ installed in VS Code for developing inside the Docker container.
 
-Docker environment setup
+Docker Environment Setup
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Run the setup script to create the Docker-based cross-compilation environment.
@@ -103,7 +103,7 @@ Docker environment setup
 
    Example:
 
-   .. code-block:: bash
+   .. code-block:: console
 
       Enter container name [default: ros2_cross_build_container]:
       Enter ROS 2 workspace path on host [default: /home/user/ros2_ws]:
@@ -144,12 +144,12 @@ Docker environment setup
 
    However, if you have modified the toolchain files in a way that conflicts with the new release, you may need to resolve the conflict manually.
 
-   We recommend restarting the container first and checking whether the auto update worked by using the ``docker logs`` command. If the auto update fails, you can enter the container and resolve the conflict manually.
+   Restart the container first and check whether the auto update worked by using the ``docker logs`` command. If the auto update fails, enter the container and resolve the conflict manually.
 
 Accessing the Docker container from VS Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After the Docker container is running, you can connect to it directly from VS Code using the Remote - Containers extension.
+After the Docker container is running, you can connect to it directly from VS Code using the Dev Containers extension.
 
 #. Open VS Code on the host machine.
 #. Open the Command Palette ``(Ctrl+Shift+P)``.
@@ -164,4 +164,5 @@ This allows you to edit source files, use the integrated terminal, and work dire
    Environment variables set in the Docker container:
 
    - ``$ROS2_WS``: Default ROS 2 workspace directory, set to ``/home/ubuntu/ros2_ws``. You can use this variable to navigate to your ROS 2 workspace inside the container.
-   - ``$TOOLCHAINS_WS``: Directory for cross-compilation toolchain files.
+   - ``$TOOLCHAINS_WS``: Directory for cross-compilation toolchain files, set to ``/home/ubuntu/toolchains``.
+   - ``$ARM64_SYSROOT``: Root of the ARM64 target sysroot inside the container, set to ``/opt/arm64_sysroot``. Copy files under this path before referencing them inside the ``arm64-chroot`` environment.

@@ -298,6 +298,9 @@ usable on the board:
    * - ``usr/lib/modules-load.d/cmemdrv.conf``,
        ``usr/lib/modprobe.d/cmemdrv.conf``
      - Load ``cmemdrv`` at boot and reserve ``CMEM_BSIZE`` bytes for it.
+   * - ``usr/lib/modules-load.d/pvrsrvkm.conf``
+     - Load ``pvrsrvkm`` at boot so the GPU driver is available to GLES applications without a
+       manual ``modprobe``.
    * - ``usr/lib/firmware/rgx.fw.*``,
        ``usr/lib/firmware/rgx.sh.*``
      - PowerVR GPU firmware from the same release as the module.

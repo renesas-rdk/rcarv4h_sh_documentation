@@ -15,5 +15,5 @@ This section covers the development of applications on the R-Car V4H SH platform
    deploy_application
    remote_debug
    cross_build_non_ros2_apps
-   cross_build_know_issue
+   cross_build_known_issue
    cross_build_faq

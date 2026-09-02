@@ -1,4 +1,4 @@
-Other interfaces
+Other Interfaces
 ^^^^^^^^^^^^^^^^
 
 The R-Car V4H SH is equipped with several additional interfaces to enhance its functionality and connectivity options.
@@ -17,9 +17,10 @@ This is particularly useful for multimedia applications.
 
 .. seealso::
 
-   For running the graphical desktop environment on a DisplayPort monitor, see :ref:`ubuntu_desktop`.
+   For running the graphical desktop environment on a DisplayPort monitor, see
+   :ref:`Ubuntu Desktop with R-Car V4H SH <ubuntu_desktop>`.
 
-DSI 
+DSI
 """
 
 The R-Car V4H SH includes a DSI interface (**J4**) for connecting to compatible displays.
@@ -42,28 +43,9 @@ The R-Car V4H SH includes a USB-UART interface (**CN4**) for serial communicatio
 This interface allows you to connect the board to a host computer via a USB cable and access the serial console.
 
 The single USB connection exposes two serial channels on the host computer.
-On Linux they appear as ``/dev/ttyUSB<n>``, and on Windows as ``COM<n>``:
-
-.. list-table:: Serial Console Channels
-   :header-rows: 1
-   :widths: 40 20 15 25
-
-   * - **Channel**
-     - **Baud rate**
-     - **Format**
-     - **Flow control**
-   * - **ChA (HSCIF0)**
-
-       For example, ``COM<lower num>`` or ``/dev/ttyUSB<lower num>``
-     - 921600 bps
-     - 8N1
-     - none
-   * - ChB (HSCIF1)
-
-       For example, ``COM<higher num>`` or ``/dev/ttyUSB<higher num>``
-     - 115200 bps
-     - 8N1
-     - none
+On Linux they appear as ``/dev/ttyUSB<n>``, and on Windows as ``COM<n>``. The baud rate,
+format and flow control of each channel are listed in
+:ref:`Serial console channels <sh_serial_console>`.
 
 **ChA (HSCIF0)** is the main console channel and carries the boot log and the Linux login prompt.
 It is always the device with the **lower** number of the two, because both channels are enumerated
@@ -71,7 +53,7 @@ from the same USB device.
 
 The format **8N1** means 8 data bits, no parity, and 1 stop bit.
 
-We recommend using a terminal emulator such as ``minicom`` (Linux) or
+Use a terminal emulator such as ``minicom`` (Linux) or
 `Tera Term <https://teratermproject.github.io/index-en.html>`_ (Windows) to connect to the USB-UART interface.
 
 For example, to open the main console with ``minicom`` on a Linux host:
@@ -87,7 +69,8 @@ For example, to open the main console with ``minicom`` on a Linux host:
 
 .. seealso::
 
-   For the full serial console setup procedure, see :ref:`sh_serial_console`.
+   For the full serial console setup procedure, see
+   :ref:`Serial console channels <sh_serial_console>`.
 
 JTAG
 """"

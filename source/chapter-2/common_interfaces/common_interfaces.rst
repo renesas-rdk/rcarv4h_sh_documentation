@@ -1,5 +1,5 @@
-Ubuntu System with R-Car V4H SH
--------------------------------
+Peripheral Interfaces
+---------------------
 
 This section provides usage information about the interfaces available on the R-Car V4H SH when running the Ubuntu system.
 
@@ -7,8 +7,10 @@ For more details about specification of each interface, refer to the `SparrowHaw
 
 Overview
 ^^^^^^^^
+
 The R-Car V4H SH supports multiple peripheral interfaces that allow users to connect and control external devices for various robotic and industrial applications.
-These interfaces include:
+
+The following figure shows where each interface is located on the board:
 
 .. figure:: ../../images/hardware_interface.png
    :alt: R-Car V4H Sparrow Hawk Hardware Interfaces
@@ -72,15 +74,20 @@ The main interfaces available on the R-Car V4H SH are listed below.
      - USB1 (input)
      - USB PD 20 V
    * - Power Control
-     - SW1, SW3, CONN1
-     - 2x switch, 1x jumper
+     - SW1, CONN1
+     - ACC power switch (SW1) and the power-on jumper (CONN1). With CONN1 **OPEN** the board
+       powers on only when SW1 is switched ON; with CONN1 **SHORT** the board powers on
+       automatically as soon as a USB PD adapter is connected to USB1, and SW1 is bypassed.
+   * - Reset
+     - SW3
+     - Manual reset button. Resets the R-Car V4H SoC only; it does not cycle board power and
+       does not reset external devices.
 
 Each subsection provides details on how to identify, configure, and access these interfaces within the Ubuntu environment.
 
 .. toctree::
-    :hidden:
-    :maxdepth: 2
+   :maxdepth: 2
 
-    high_speed_interfaces
-    communication_interface
-    other_interfaces
+   high_speed_interfaces
+   communication_interface
+   other_interfaces

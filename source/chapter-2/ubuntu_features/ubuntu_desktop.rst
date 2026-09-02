@@ -5,20 +5,13 @@ Ubuntu Desktop with R-Car V4H SH
 
 Ubuntu Desktop is supported together with the R-Car V4H SH environment.
 
-Main points:
-
-- Ubuntu Desktop environment is available on R-Car V4H SH
-- GUI-based operation is supported
-- Can be used for development and evaluation
-- Suitable for desktop-style workflows on the board
-
 This guide walks you through setting up Ubuntu Desktop on the R-Car V4H SH.
 
 Prerequisites
 """""""""""""
 
 - R-Car V4H SH
-- SD card with the Ubuntu image flashed. Please refer to the :ref:`Quick Setup Guide <quick_setup_sh_guide>` for instructions on how to prepare the SD card.
+- microSD card with the Ubuntu image flashed. Please refer to the :ref:`Quick Setup Guide <quick_setup_sh_guide>` for instructions on how to prepare the microSD card.
 - Monitor and DisplayPort cable
 - Internet connection
 
@@ -44,7 +37,7 @@ The following figure illustrates the typical desktop setup for the R-Car V4H SH:
 Boot the Board
 ~~~~~~~~~~~~~~
 
-- Insert the flashed SD card into the R-Car V4H SH board.
+- Insert the flashed microSD card into the R-Car V4H SH board.
 - Power on the board.
 
 Initial Boot and Login
@@ -58,7 +51,7 @@ Initial Boot and Login
 Expand Root Filesystem
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Expand the root filesystem using the ``parted`` tool to use the full SD card capacity.
+Expand the root filesystem using the ``parted`` tool to use the full microSD card capacity.
 
 If you have already expanded the root filesystem, you can skip this step.
 
@@ -119,12 +112,13 @@ Notes
 
 - Ensure a stable internet connection during desktop installation.
 - The installation process may take some time depending on internet speed.
-- After installation and reboot, you should see the Ubuntu Desktop environment instead of Weston.
+- After installation and reboot, the board starts the graphical Ubuntu Desktop session on the
+  DisplayPort monitor instead of the text console login prompt.
 
 Troubleshooting
 ~~~~~~~~~~~~~~~
 
-- If boot fails, verify that SD card boot mode is correctly set.
+- If boot fails, verify that the microSD card boot mode is correctly set.
 - For installation issues, check internet connectivity and available disk space.
 
 Switch from ``networkd`` to ``NetworkManager``
@@ -144,6 +138,13 @@ If you want to switch to ``NetworkManager`` **to support graphical network manag
 
       sudo -i
 
+#. Install NetworkManager while ``networkd`` is still running, otherwise ``apt`` has no network:
+
+   .. code-block:: bash
+
+      apt update
+      apt install network-manager
+
 #. Stop and disable ``networkd``:
 
    .. code-block:: bash
@@ -151,13 +152,6 @@ If you want to switch to ``NetworkManager`` **to support graphical network manag
       systemctl stop systemd-networkd
       systemctl disable systemd-networkd
       systemctl mask systemd-networkd
-
-#. Install NetworkManager:
-
-   .. code-block:: bash
-
-      apt update
-      apt install network-manager
 
 #. Check status:
 
@@ -239,14 +233,16 @@ The graphics stack used by Ubuntu Desktop on the R-Car V4H SH is:
      - Ubuntu 24.04 with GNOME 46 on Wayland.
 
 Because the vendor driver is a binary blob with several gaps, the desktop session ships with a
-set of workarounds. They are applied automatically by the session environment, so applications
-must be started from inside the desktop session in order to inherit them.
+set of workarounds that close them, such as layering desktop OpenGL onto Vulkan through Mesa
+zink and routing browser WebGL through ANGLE. They are applied automatically by the session
+environment, so applications must be started from inside the desktop session in order to
+inherit them.
 
 .. warning::
 
    The set of workarounds may not be complete. Some applications may not work correctly, or may crash, due to missing features in the vendor driver.
 
-   Please report any issues to the `GitHub repository's issues <https://github.com/renesas-rdk/rcarv4h_sh_documentation/issues>` for further support.
+   Please report any issues to the `GitHub repository's issues <https://github.com/renesas-rdk/rcarv4h_sh_documentation/issues>`_ for further support.
 
 What Runs on the GPU and on the CPU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

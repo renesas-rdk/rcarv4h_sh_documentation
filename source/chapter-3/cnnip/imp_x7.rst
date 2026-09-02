@@ -24,7 +24,8 @@ image recognition tasks efficiently.
    Deep learning acceleration is therefore provided by the CNN-IP alone, with the
    Cortex-A76 application CPU clusters handling the remaining processing.
 
-**Specifications**
+Specifications
+""""""""""""""
 
 .. list-table::
    :header-rows: 1

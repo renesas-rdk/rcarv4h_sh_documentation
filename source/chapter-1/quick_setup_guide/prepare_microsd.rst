@@ -1,12 +1,12 @@
 .. _sh_prepare_microsd:
 
-Preparing the root file system microSD card
+Preparing the Root File System microSD Card
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To boot the R-Car V4H SH using a microSD card, you must first flash a bootable Linux image onto it.
 Two options are described below: ``bmaptool`` on Ubuntu, or Balena Etcher on Windows, macOS, or Linux.
 
-microSD card requirements
+microSD Card Requirements
 """""""""""""""""""""""""
 
 - A host machine for flashing the image:
@@ -25,14 +25,14 @@ microSD card requirements
 
   .. list-table::
      :header-rows: 1
-     :widths: 10 50
+     :widths: 30 70
 
      * - **File name**
        - **Description**
      * - ``board_image/``
        - Board image files
 
-         - ``ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.xz``: Ubuntu 24.04 Server SD card image file containing:
+         - ``ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.xz``: Ubuntu 24.04 Server microSD card image file containing:
 
            - Linux kernel image
            - Linux device tree file

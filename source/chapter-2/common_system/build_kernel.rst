@@ -62,13 +62,15 @@ Every build sub-command configures the kernel before compiling. "Configure" does
 .. note::
 
    The ``all`` target does **not** build the kernel modules, and none of the ``kernel``
-   sub-commands produce a ``fitImage``. Each target is a superset of the previous one, so a
-   single command is usually enough:
+   sub-commands produce a ``fitImage``:
 
-   * ``./main_build.sh kernel modules-install`` builds the kernel image, the device trees,
-     and the modules, and installs the modules.
-   * ``./main_build.sh fitimage all`` additionally rebuilds the initramfs, builds the BL31 blob
-     when it is missing, and packages everything into ``fitImage``. See
+   * ``./main_build.sh kernel modules-install`` builds the kernel image, the device trees and
+     the modules, and installs the modules to ``KERNEL_MODULES_OUTPUT_DIR``.
+   * ``./main_build.sh fitimage all`` builds the kernel image, the device trees and the
+     modules, then the BL31 blob and the initramfs, and packages them into ``fitImage``.
+     Internally it runs ``kernel modules``, **not** ``kernel modules-install``, so it leaves
+     ``KERNEL_MODULES_OUTPUT_DIR`` untouched. Run ``./main_build.sh kernel modules-install``
+     as well whenever the modules also have to be deployed. See
      :ref:`Building the FIT Image <build_fitimage>`.
 
    The board boots from ``fitImage``, so a change to the kernel or the device tree only takes
@@ -131,7 +133,9 @@ makes it a quick way to check that an edited fragment produces the configuration
    ``CONFIG_LOCALVERSION`` and ``CONFIG_LOCALVERSION_AUTO`` are appended by the build script from
    the ``KERNEL_LOCALVERSION`` setting in ``config.ini``, after both files. Whatever the defconfig
    and the fragment set for these two symbols is therefore overridden; change
-   ``KERNEL_LOCALVERSION`` instead.
+   ``KERNEL_LOCALVERSION`` instead. When ``KERNEL_VARIANT`` is set, its fragment is appended
+   after these two lines and can set ``CONFIG_LOCALVERSION`` again, which is what gives the
+   variant its own ``uname -r`` and its own ``/usr/lib/modules/<release>``.
 
 .. tip::
 
@@ -172,10 +176,10 @@ Adding a New Device Tree Overlay
 A new overlay is not picked up automatically. After creating the ``.dtso`` source file, register it
 in two places:
 
-1. Add the ``.dtbo`` target to ``linux-sh/arch/arm64/boot/dts/renesas/Makefile`` so that the kernel
+#. Add the ``.dtbo`` target to ``linux-sh/arch/arm64/boot/dts/renesas/Makefile`` so that the kernel
    build produces it.
 
-2. Add the overlay to ``rcar-utils/local-build-scripts/build_fitimage.sh`` so that it is packaged
+#. Add the overlay to ``rcar-utils/local-build-scripts/build_fitimage.sh`` so that it is packaged
    into the FIT image, by appending an entry to both arrays:
 
    .. code-block:: bash

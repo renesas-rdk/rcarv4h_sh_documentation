@@ -23,9 +23,9 @@ and CAN1 is on the odd-numbered pins**, with both ports sharing the same ground.
 The figure below shows that header twice, so that the schematic pin numbers can be
 matched to the physical connector:
 
-- **Top - schematic view.** The ``CAN BUS CN`` symbol taken from the board schematic,
+- **Top — schematic view.** The ``CAN BUS CN`` symbol taken from the board schematic,
   showing which signal is routed to each of the six pins.
-- **Bottom - photo of the board.** The same header as it appears on the
+- **Bottom — photo of the board.** The same header as it appears on the
   R-Car V4H SH, with every pin labeled. Red labels are the CAN0 signals,
   blue labels are the CAN1 signals.
 
@@ -34,7 +34,7 @@ matched to the physical connector:
    :align: center
    :width: 500px
 
-   ``CAN BUS CN`` (CONN2) header - schematic symbol (top) and the corresponding
+   ``CAN BUS CN`` (CONN2) header — schematic symbol (top) and the corresponding
    pins on the board (bottom).
 
 .. important::
@@ -52,10 +52,10 @@ matched to the physical connector:
      - Description
    * - 1
      - CAN1_L
-     - CAN1 bus line - low.
+     - CAN1 bus line — low.
    * - 2
      - CAN0_L
-     - CAN0 bus line - low. Marked by the ``2`` on the silkscreen.
+     - CAN0 bus line — low. Marked by the ``2`` on the silkscreen.
    * - 3
      - GND
      - Common ground, shared by both ports.
@@ -64,10 +64,10 @@ matched to the physical connector:
      - Common ground, shared by both ports.
    * - 5
      - CAN1_H
-     - CAN1 bus line - high.
+     - CAN1 bus line — high.
    * - 6
      - CAN0_H
-     - CAN0 bus line - high.
+     - CAN0 bus line — high.
 
 Follow the steps below to use the CAN-FD interfaces on the R-Car V4H SH running Ubuntu.
 
@@ -90,14 +90,14 @@ Bring up the CAN0 and CAN1 interfaces (for example, 1 Mbps nominal, 5 Mbps data)
 
 .. code-block:: bash
 
-   # Bring up the CAN0 interface with the specified bitrate and data bitrate for CAN-FD
+   # Configure and bring up the CAN0 interface with the specified bitrate and data bitrate for CAN-FD
    sudo ip link set can0 down
-   sudo ip link set can0 up type can restart-ms 100 bitrate 1000000 dbitrate 5000000 fd on
+   sudo ip link set can0 type can restart-ms 100 bitrate 1000000 dbitrate 5000000 fd on
    sudo ip link set can0 up
 
-   # Bring up the CAN1 interface with the specified bitrate and data bitrate for CAN-FD
+   # Configure and bring up the CAN1 interface with the specified bitrate and data bitrate for CAN-FD
    sudo ip link set can1 down
-   sudo ip link set can1 up type can restart-ms 100 bitrate 1000000 dbitrate 5000000 fd on
+   sudo ip link set can1 type can restart-ms 100 bitrate 1000000 dbitrate 5000000 fd on
    sudo ip link set can1 up
 
 Check the interface status:
@@ -165,17 +165,17 @@ On the R-Car V4H SH, the I2C pins are located on the Raspberry Pi GPIO 40-pin he
 
 .. list-table:: I2C3 Interface Pins
    :header-rows: 1
-   :widths: 20 20 40
+   :widths: 25 25 50
 
    * - Pin Name
      - Function
      - Description
-   * - GPIO2 - Pin number 3
-     - I2C3 - SDA3
-     - I2C3 data line - Serial Data (connected with 4.7K pull-up resistor).
-   * - GPIO3 - Pin number 5
-     - I2C3 - SCL3
-     - I2C3 clock line - Serial Clock (connected with 4.7K pull-up resistor).
+   * - GPIO2 — pin 3
+     - I2C3 SDA3
+     - I2C3 data line, serial data (connected with a 4.7 kΩ pull-up resistor).
+   * - GPIO3 — pin 5
+     - I2C3 SCL3
+     - I2C3 clock line, serial clock (connected with a 4.7 kΩ pull-up resistor).
 
 **Usage example with i2c-tools**
 
@@ -226,13 +226,13 @@ Example output:
 
 In this example, I2C3 corresponds to bus number 3.
 
-.. hint::
+.. note::
 
    *How to identify the correct I2C bus number for I2C3?*
 
    You can identify the correct I2C bus number by checking the device tree source (DTS) file for the R-Car V4H SH or by referring to the system documentation.
 
-   In this case, the device tree of the R-Car V4H SH defines the I2C3 interface as ``e66d0000.i2c``, which is mapped to **I²C bus number 3**.
+   In this case, the device tree of the R-Car V4H SH defines the I2C3 interface as ``e66d0000.i2c``, which is mapped to **I2C bus number 3**.
 
 Scan for I2C devices on bus 3:
 
@@ -254,15 +254,28 @@ Example output:
    60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
    70: -- -- -- -- -- -- -- --
 
-The above output indicates that a device with address ``0x1a`` is connected to the I2C3 bus, in this case, it's the Argon FAN.
+The above output indicates that a device with address ``0x1a`` is connected to the I2C3 bus. In this case, it is the Argon40 fan.
 
-We can use the ``i2cset`` command to write data to control the FAN speed:
+Use the ``i2cset`` command to write the duty-cycle register (``0x80``) of the Argon40 Fan HAT.
+The value is a percentage between 0 and 100:
 
 .. code-block:: bash
 
-   sudo i2cset -y 3 0x1a 0x00 # 0%
-   sudo i2cset -y 3 0x1a 0x32 # 50%
-   sudo i2cset -y 3 0x1a 0x64 # 100%
+   sudo i2cset -y 3 0x1a 0x80 0     # 0%
+   sudo i2cset -y 3 0x1a 0x80 50    # 50%
+   sudo i2cset -y 3 0x1a 0x80 100   # 100%
+
+.. note::
+
+   These raw writes work only while no fan device tree overlay is loaded, which is the case in
+   the ``i2cdetect`` output above: address ``1a`` is listed rather than ``UU``. When the
+   ``#fan-argon40`` overlay is applied, the kernel driver claims ``0x1a`` and ``i2cset`` refuses
+   to touch it. Control the fan through hwmon instead:
+
+   .. code-block:: bash
+
+      echo 2 | sudo tee /sys/devices/platform/pwm-fan-ext/hwmon/hwmon0/pwm1_enable
+      echo 101 | sudo tee /sys/devices/platform/pwm-fan-ext/hwmon/hwmon0/pwm1   # 0..255
 
 UART (Universal Asynchronous Receiver/Transmitter)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,15 +286,15 @@ On the R-Car V4H SH, the UART pins are located on the Raspberry Pi GPIO 40-pin h
 
 .. list-table:: UART Interface Pins
    :header-rows: 1
-   :widths: 20 20 40
+   :widths: 25 25 50
 
    * - Pin Name
      - Function
      - Description
-   * - GPIO14 - Pin number 8
+   * - GPIO14 — pin 8
      - TXD
      - UART transmit data (TX) signal.
-   * - GPIO15 - Pin number 10
+   * - GPIO15 — pin 10
      - RXD
      - UART receive data (RX) signal.
 
@@ -299,30 +312,36 @@ List available serial ports:
 
 .. code-block:: bash
 
+   # Run on the R-Car V4H SH
    ls /dev/ttySC*
 
 The output should show the available serial ports, including the UART interface:
 
 .. code-block:: console
 
-   # ttySC0 and ttySC1 are the CN4 debug console channels; ttySC2 is the 40-pin header UART (GPIO14/15).
-   /dev/ttySC0  /dev/ttySC1 /dev/ttySC2
+   /dev/ttySC0  /dev/ttySC1  /dev/ttySC2
+
+``ttySC0`` and ``ttySC1`` are the CN4 debug console channels; ``ttySC2`` is the 40-pin header
+UART on GPIO14/GPIO15.
 
 Open a serial connection using ``minicom``:
 
 .. code-block:: bash
 
+   # Run on the R-Car V4H SH
    sudo minicom -D /dev/ttySC2 -b 115200
 
-Open and configure the serial console on the host computer to interact with the R-Car V4H SH through the UART interface.
+On the host PC, open a second minicom session on the USB-UART adapter:
 
-Enable echoing of typed characters in minicom by pressing ``Ctrl-A`` followed by ``E``.
+.. code-block:: bash
 
-Press ``Ctrl-A``, then ``U``, to toggle the option that adds a carriage return (CR) to each incoming linefeed (LF) character received from the remote device.
+   # Run on the host PC
+   sudo minicom -D /dev/ttyUSB0 -b 115200
 
-When you type in the minicom terminal, the characters are sent to the host computer through the UART interface on the R-Car V4H SH.
-
-Similarly, any data sent from the R-Car V4H SH through the UART interface is displayed in the minicom terminal on the host computer.
+In each session, enable echoing of typed characters with ``Ctrl-A`` then ``E``, and press
+``Ctrl-A`` then ``U`` to add a carriage return (CR) to each incoming linefeed (LF). Characters
+typed in either session now appear in the other, which confirms the 40-pin header UART works in
+both directions.
 
 GPIO (General Purpose Input/Output)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -411,4 +430,4 @@ Only recording test:
 
 .. code-block:: bash
 
-   arecord -D hw:0,0 -t wav -d 5 -c 2 -r 48000 -f S16_LE > audio.wav
+   arecord -D hw:0,0 -t wav -d 5 -c 2 -r 48000 -f S16_LE audio.wav

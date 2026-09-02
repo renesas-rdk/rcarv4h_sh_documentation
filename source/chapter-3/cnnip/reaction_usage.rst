@@ -1,10 +1,12 @@
+.. _reaction_usage:
+
 REACTION Usage
 """"""""""""""
 
 Once REACTION is installed, running a model always follows the same flow: prepare the target
 board, describe the experiment in a ``reaction.yaml`` file, then run ``reaction start`` on the
-host machine. The entire pipeline - ONNX export, quantization, TVM compilation for the CNN-IP,
-execution on the board and the accuracy or latency report - is driven from that single YAML
+host machine. The entire pipeline — ONNX export, quantization, TVM compilation for the CNN-IP,
+execution on the board and the accuracy or latency report — is driven from that single YAML
 file.
 
 Workflow
@@ -27,16 +29,18 @@ Available Models
 
 The installation script already unpacks the model input package into the REACTION directory, so
 the sample models are available out of the box. The names that can be used in ``model_name`` are
-cataloged in the registry files under ``reaction/register/configs``, one per model source:
-``hugging_face``, ``openmmlab``, ``torchhub`` and ``custom``, plus
-``register/application/config`` for the application models.
+cataloged in the registry files under ``register/configs``, one per model source:
+``hugging_face``, ``openmmlab``, ``torchhub``, ``custom``, ``mlcommons`` and ``byom`` (the models
+added by ``reaction bond``, see :ref:`Bringing Your Own Model <reaction_byom>`), plus
+``register/application/config`` for the application models. All paths are relative to the
+REACTION root directory.
 
 Set Up the TVM RPC Server on the Target
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 REACTION runs the compiled model on the board through a TVM RPC server. The server relies on a
 private Python 3.10 environment that has to be installed once, as described in
-:ref:`Setting Up the RPC Server on the Target Board <rpc-server-setup>`. Start it on the board
+:ref:`Setting Up the RPC Server on the Target Board <rpc_server_setup>`. Start it on the board
 before running ``reaction start``, and keep ``rpc_server_auto: false`` in ``reaction.yaml``:
 
 .. code-block:: bash
@@ -84,7 +88,7 @@ running a registered model on the board is:
          passwd: ubuntu             # SSH password of the board
          rpc_server_auto: false     # The RPC server is started manually on the board
 
-See :doc:`reaction_config` for the meaning of these keys. Then run the experiment from the same
+See :ref:`REACTION Configuration <reaction_config>` for the meaning of these keys. Then run the experiment from the same
 directory:
 
 .. code-block:: bash
@@ -126,12 +130,12 @@ A result directory contains the artifacts of each stage:
    ├── onnx          # FP32 ONNX model exported from the source model
    ├── quant         # Quantized ONNX model, the input of the compiler
    ├── summary       # evaluate.log and the experiment configuration
-   └── tvm-v4x
+   └── tvm-v4h2
        └── tvm_cch   # Compilation artifacts, logs and the TVM Relay IR
 
 .. tip::
 
-   ``tvm-v4x/<task>/tvm_model_relay.txt`` contains the TVM Relay Intermediate Representation and
+   ``tvm-v4h2/<task>/tvm_model_relay.txt`` contains the TVM Relay Intermediate Representation and
    shows how the model was partitioned. Operators inside
    ``@tvmgen_default_tvmgen_default_rcar_imp_main_xxx`` are dispatched to the CNN-IP; the rest
    runs on the CPU.

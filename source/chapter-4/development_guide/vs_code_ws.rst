@@ -8,7 +8,7 @@ This section explains the VS Code workspace configuration used for deploying, ru
 Prerequisites
 """""""""""""
 
-#. Complete the :ref:`Cross compilation environment setup <requirements_ros2_cross_build>` section.
+#. Complete the :ref:`Cross-compilation Environment Setup <requirements_ros2_cross_build>` section.
 #. Access the Docker container using VS Code and the Dev Containers extension.
 #. Open the ``/home/ubuntu/ros2_ws/`` directory in the Docker container.
 
@@ -70,7 +70,7 @@ Workspace Settings
 
 Open the ``settings.json`` file and edit the following variables to match your development environment.
 
-.. attention::
+.. important::
 
    These variables are essential for the remote debugging and deployment workflow.
 
@@ -121,22 +121,22 @@ Open the ``settings.json`` file and edit the following variables to match your d
      - No
      - No
    * - ``NODE_PACKAGE_NAME``
-     - **Yes**
+     - Per mode
      - ROS 2 package name that contains the executable.
      - **Yes**
      - Debug only
    * - ``NODE_EXECUTABLE_NAME``
-     - **Yes**
+     - Per mode
      - Name of the executable to start.
      - **Yes**
      - Debug only
    * - ``LAUNCH_PACKAGE_NAME``
-     - **Yes**
+     - Per mode
      - ROS 2 package name that contains the launch file.
      - No
      - **Yes**
    * - ``LAUNCH_FILE_NAME``
-     - **Yes**
+     - Per mode
      - Launch file name used to start the ROS 2 application.
      - No
      - **Yes**
@@ -144,14 +144,17 @@ Open the ``settings.json`` file and edit the following variables to match your d
 .. note::
 
    - Variables marked as *No* should be modified only if your development environment differs from the default environment provided by the Docker image.
-   - Variables marked as **Yes** must be set correctly each time you run the workflow.
+   - Variables marked as **Yes** must be set correctly every time you run the workflow.
+   - Variables marked *Per mode* are required only in the modes whose column shows **Yes**.
+     *Debug only* means the variable is required in that mode only when you start a debug
+     session (see :ref:`ROS 2 Application Remote Debugging <remote_debug>`), not for a plain run.
 
 Supported VS Code Tasks
 """""""""""""""""""""""
 
 The following VS Code tasks are available in the workspace.
 
-These tasks are defined in the ``tasks.json`` file and can be executed from the Command Palette (``Ctrl+Shift+P``) by searching for **Run Task** and selecting the desired task.
+These tasks are defined in the ``tasks.json`` file and can be executed from the Command Palette (``Ctrl+Shift+P``) by running **Tasks: Run Task** and selecting the desired task.
 
 .. list-table:: Supported VS Code Tasks
    :widths: 35 65
@@ -220,13 +223,13 @@ The following tasks are configured as buttons by default. You can access them fr
 Available AI Agent Skills
 """""""""""""""""""""""""
 
-The workspace ships a shared library of *Agent Skills* - focused,
+The workspace ships a shared library of *Agent Skills* — focused,
 self-contained workflow guides that AI coding agents read before acting
 on a task. The same library is shared by three agents so that build,
 deploy, debug, and packaging behavior is consistent regardless of which
 assistant is driving.
 
-Agent entry points
+Agent Entry Points
 ~~~~~~~~~~~~~~~~~~~
 
 Each agent reads a different top-level file, but all of them route to the
@@ -252,7 +255,7 @@ same skills under ``.github/skills/``:
 Because ``.claude/skills`` is a symbolic link to ``.github/skills``, a
 single edit to a ``SKILL.md`` file updates every agent at once.
 
-Skill router
+Skill Router
 ~~~~~~~~~~~~
 
 Agents pick a skill by the *primary verb* of the request, as defined in
@@ -276,7 +279,7 @@ Agents pick a skill by the *primary verb* of the request, as defined in
 If more than one could apply, agents follow the workflow order
 **conventions → build → deploy → on-device test**.
 
-Skill reference
+Skill Reference
 ~~~~~~~~~~~~~~~
 
 .. list-table:: Available Skills
@@ -302,7 +305,7 @@ Skill reference
      - Compose Conventional Commits messages with intelligent staging
        and message generation from the diff.
 
-General rules for agents
+General Rules for Agents
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The shared guidance instructs all agents to:
@@ -311,7 +314,7 @@ The shared guidance instructs all agents to:
   under ``.vscode/`` over ad hoc shell commands.
 - Avoid generic ROS 2 workflows when this repository already defines a
   workspace-specific one.
-- Never invent target-board credentials, IPs, or paths - always read
+- Never invent target-board credentials, IPs, or paths — always read
   them from ``.vscode/settings.json``.
 - Treat the board as shared lab hardware: surface intent before any
   mutation, capture state before changes, and restore it afterward.

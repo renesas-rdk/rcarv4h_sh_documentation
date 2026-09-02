@@ -5,7 +5,7 @@ Cross-compilation Usage Guide
 
 This section describes how to use the cross-compilation commands inside the Docker container.
 
-Prepare your workspace
+Prepare Your Workspace
 """"""""""""""""""""""
 
 If you are **cross-building any ROS 2 applications**, ensure that the ROS 2 workspace is fully set up with all necessary dependency packages.

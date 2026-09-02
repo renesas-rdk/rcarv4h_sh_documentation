@@ -10,7 +10,7 @@ Prerequisites
 
 Before starting deployment:
 
-#. Complete the :ref:`Cross compilation environment setup <requirements_ros2_cross_build>` section.
+#. Complete the :ref:`Cross-compilation Environment Setup <requirements_ros2_cross_build>` section.
 #. Prepare the VS Code workspace configuration by following :ref:`ROS 2 VS Code Workspace Configuration <ros2_vscode_workspace>`.
 #. Make sure the required :ref:`variables <workspace_settings>` in ``settings.json`` are configured correctly, especially ``TARGET_IP``.
 #. Make sure all required packages are available in the current workspace on the host machine.
@@ -34,7 +34,7 @@ Prepare the necessary ROS 2 packages in the current workspace on the host machin
 
 .. note::
 
-   Note that target sysroot libraries must match the runtime environment of the target device.
+   The target sysroot libraries must match the runtime environment of the target device.
    Otherwise, the application may fail to run on the target device due to missing or incompatible libraries.
 
    For more information about how to avoid library version mismatches, see :ref:`ABI mismatch issues <abi_mismatch>` in the FAQ.
@@ -85,10 +85,27 @@ There are two main methods to deploy your application to the R-Car V4H SH platfo
 
    - Click the **Deploy** button in the VS Code status bar to start the deployment process.
 
+#. Copy the ``install`` directory manually:
+
+   .. code-block:: bash
+
+      scp -r install <TARGET_USER>@<TARGET_IP>:<TARGET_ROS2_WS>/
+
+   Use the ``TARGET_USER``, ``TARGET_IP`` and ``TARGET_ROS2_WS`` values from
+   :ref:`Workspace Settings <workspace_settings>`. Use this method when you are not working
+   inside the VS Code workspace.
+
 Install Dependencies on the Target
 """""""""""""""""""""""""""""""""""
 
 After deployment, install any additional dependencies on the target device.
+
+The quickest way is the VS Code task: click the **Install Deps** button in the status bar, or
+press ``Ctrl+Shift+P``, run **Tasks: Run Task**, and choose
+**ROS2: Install Deps on Target (rosdep)**. The task runs ``rosdep`` on the board over SSH
+against the ``install/`` workspace you just deployed, so no terminal on the board is needed.
+
+To do the same by hand:
 
 #. Change to the workspace directory on the target device:
 

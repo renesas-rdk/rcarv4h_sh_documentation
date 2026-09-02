@@ -10,7 +10,7 @@ Cross-building is the process of compiling software on a host system to run on a
 
 The advantage of cross-building is that it allows developers to build applications for embedded systems without compiling directly on the target device, which has limited resources and longer build times.
 
-In this case, we will be cross-building applications on a development machine to run on the R-Car V4H SH (target).
+In this case, applications are cross-built on a development machine to run on the R-Car V4H SH (target).
 
 .. note::
 
@@ -27,7 +27,7 @@ How ROS 2 Cross-building Works
 
    Cross-build system overview
 
-The cross-build environment runs inside a **Docker container** on the host machine. This container is pre-configured with the necessary toolchains and a **sysroot** - a copy of the target device's root filesystem that provides the libraries and headers needed during compilation.
+The cross-build environment runs inside a **Docker container** on the host machine. This container is pre-configured with the necessary toolchains and a **sysroot** — a copy of the target device's root filesystem that provides the libraries and headers needed during compilation.
 
 To handle architecture differences, the system uses **QEMU** to emulate the ARM64 architecture. This allows the Docker container running on an x86_64 host to execute ARM binaries, which is essential for tasks such as **installing dependencies and running configuration scripts that need to behave as if they are on the target device.**
 

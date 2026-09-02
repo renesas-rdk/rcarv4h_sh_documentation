@@ -1,12 +1,10 @@
+.. _reaction_setup:
+
 REACTION Setup
 """"""""""""""
 
 This page collects everything that has to be installed once, on the host machine and on
 the target board, before REACTION can compile and evaluate models.
-
-.. note::
-
-   AI Agent skills are available at `REACTION AI Skills <https://github.com/renesas-rdk/reaction-ai-skills>`_
 
 Software Requirements
 ~~~~~~~~~~~~~~~~~~~~~
@@ -29,6 +27,12 @@ The packages are available from `(Gen4) R-Car V4x SW
 <https://www.renesas.com/en/myrenesas/secure-portals/gen4-r-car-v4x-sw>`_. This is a secure
 portal, so an account and an approved access request for the R-Car V4x SW package are required
 before the following packages can be downloaded:
+
+.. note::
+
+   ``v3.xx.0`` stands for the SDK release being installed; take all four packages from the same
+   release. These pages were written against ``v3.43.0``. Substitute that number wherever
+   ``v3.xx.0`` appears in a package name or a path on these pages.
 
 .. list-table:: HyCo / SDK Packages
    :header-rows: 1
@@ -73,7 +77,7 @@ Detailed Steps
 
    .. list-table:: Environment Variable Configuration
       :header-rows: 1
-      :widths: 20 11 11 44
+      :widths: 26 12 12 50
 
       * - Variable
         - Default
@@ -146,7 +150,7 @@ Detailed Steps
          export COMPOSE_PARALLEL_LIMIT=1
 
 
-.. _rpc-server-setup:
+.. _rpc_server_setup:
 
 Setting Up the RPC Server on the Target Board
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,11 +183,16 @@ instead.
 
       BOARD=ubuntu@192.168.1.100   # <user>@<ip> of the board
       BOARD_PW=ubuntu              # SSH password of the board
-      PKG="/path/to/hyco-install"  # Root directory of the unpacked HyCo package
+      PKG=/path/to/hyco-install    # Root directory of the unpacked HyCo package, i.e. the
+                                   # directory that contains both installation/install.sh and
+                                   # packages/v4x/*.whl
       XOS_VERSION=v3.43.0          # Installed xOS SDK version, adjust if different
 
-The script needs ``sshpass`` on the host machine and checks all of these settings before it
-changes anything on the board. Run it once:
+The script needs ``sshpass`` on the host machine, and the board needs working internet access
+for this one run: the bootstrap it pushes to the board fetches ``uv`` from
+``https://astral.sh/uv/install.sh`` and lets ``uv`` download CPython 3.10 there. The TVM runtime
+and Artifact Helper wheels are copied from the host and installed without a package index. All
+settings are checked before anything on the board is changed. Run it once:
 
 .. code-block:: bash
 
@@ -206,4 +215,4 @@ before every evaluation session, using the script that was deployed to ``~/rpc_s
    where TVM is not installed, and fails. The server is not started at boot either, so it must
    be started manually again after a reboot of the board.
 
-See :doc:`reaction_usage` for the ``reaction.yaml`` settings that connect to this server.
+See :ref:`REACTION Usage <reaction_usage>` for the ``reaction.yaml`` settings that connect to this server.

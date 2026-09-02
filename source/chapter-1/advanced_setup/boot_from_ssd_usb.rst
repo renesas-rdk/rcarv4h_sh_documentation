@@ -1,11 +1,9 @@
 .. _boot_from_nvme:
 
-.. _boot_from_usb:
-
 Booting R-Car V4H SH from NVMe SSD or USB Storage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The advantages of booting from an NVMe SSD or a USB storage device include **faster read/write speeds**, improved performance, and increased storage capacity compared to booting from an SD card.
+The advantages of booting from an NVMe SSD or a USB storage device include **faster read/write speeds**, improved performance, and increased storage capacity compared to booting from a microSD card.
 
 The boot flow is the same for both devices: write the root file system image to the storage device (if it does not contain one yet), then configure U-Boot to boot from that device. Only the device node and the U-Boot command differ:
 
@@ -54,12 +52,19 @@ A USB storage device does not require any adapter board. Plug it directly into o
 Detailed Steps
 """"""""""""""
 
+.. warning::
+
+   The following steps erase all existing data on the storage device. Back up anything you need
+   before proceeding.
+
+.. caution::
+
+   Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
+
 .. important::
 
-   - Make sure to back up any important data on the storage device before proceeding, as the following steps will erase all existing data on it.
    - Connect the M.2 NVMe SSD to the R-Car V4H SH board before powering on the board.
    - Connect the USB storage device before you enter the U-Boot prompt, so that U-Boot can detect it.
-   - Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
 
 .. note::
 
@@ -67,7 +72,7 @@ Detailed Steps
 
    If your system detects the storage device with a different device name, replace it accordingly in the commands and examples.
 
-Storage device preparation
+Storage Device Preparation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::
@@ -81,10 +86,10 @@ Storage device preparation
    - For an NVMe SSD: insert the M.2 NVMe SSD directly into the onboard M.2 slot of the R-Car V4H SH.
    - For a USB storage device: plug it into one of the USB 3.0 Type-A ports of the R-Car V4H SH.
 
-#. Boot from the SD card:
+#. Boot from the microSD card:
 
-   - Insert the SD card with the Ubuntu image into the R-Car V4H SH and power it on.
-   - Ensure that the system boots successfully from the SD card.
+   - Insert the microSD card with the Ubuntu image into the R-Car V4H SH and power it on.
+   - Ensure that the system boots successfully from the microSD card.
 
 #. Install the required tools:
 
@@ -95,7 +100,7 @@ Storage device preparation
 
 #. Flash the storage device:
 
-   - Once booted from the SD card, open a terminal.
+   - Once booted from the microSD card, open a terminal.
    - Make sure the storage device is recognized by running:
 
      .. code-block:: bash
@@ -115,49 +120,62 @@ Storage device preparation
         # Copy the bmap file to the target board
         scp ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.bmap ubuntu@<rcarv4h_sh_ip>:/home/ubuntu/
 
-   - Flash the root filesystem image to the storage device by running the command matching your device:
+   - Flash the root filesystem image to the storage device by running **only** the command that
+     matches your device. Change the device name if your storage device is recognized under a
+     different name.
+
+     For an NVMe SSD:
 
      .. code-block:: bash
 
-        # Please change the device name if your storage device is recognized with a different name.
-
-        # NVMe SSD
         sudo bmaptool copy ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.xz /dev/nvme0n1
 
-        # USB storage device
+     For a USB storage device:
+
+     .. code-block:: bash
+
         sudo bmaptool copy ubuntu-24.04-server-arm64-rcarv4h-sparrowhawk.img.xz /dev/sda
 
-#. From now on, the SD card is no longer required for booting the system. You can remove the SD card from the R-Car V4H SH.
+#. From now on, the microSD card is no longer required for booting the system. You can remove the microSD card from the R-Car V4H SH.
 
 .. _ssd_bootloader:
 
-Configure the bootloader
+Configure the Bootloader
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Make sure you can access the R-Car V4H SH board via serial console.
 #. Power off the board and power it on again to access the bootloader prompt. Press any key to stop the autoboot process and access the U-Boot prompt.
 #. At the U-Boot prompt, set the boot device to the NVMe SSD or to the USB storage device by running the following commands:
 
-   If you want to boot from the storage device by default, you can set the boot command to run the corresponding boot sequence:
+   To boot from the storage device by default, set the boot command to the matching boot
+   sequence. Run **only** the block for your device.
+
+   For an NVMe SSD:
 
    .. code-block:: bash
 
-      # NVMe SSD
       setenv bootcmd 'run autoconf_nvme'
       saveenv
 
-      # USB storage device
-      setenv bootcmd 'run autoconf_usb'
-      saveenv
-
-   Or you can manually boot from the storage device by running the corresponding command:
+   For a USB storage device:
 
    .. code-block:: bash
 
-      # NVMe SSD
+      setenv bootcmd 'run autoconf_usb'
+      saveenv
+
+   Alternatively, boot from the storage device once, without changing ``bootcmd``.
+
+   For an NVMe SSD:
+
+   .. code-block:: bash
+
       run autoconf_nvme
 
-      # USB storage device
+   For a USB storage device:
+
+   .. code-block:: bash
+
       run autoconf_usb
 
 #. Verify booting from the storage device:
@@ -179,15 +197,17 @@ Configure the bootloader
         sudo apt update
         sudo apt install parted
 
+     For an NVMe SSD:
+
      .. code-block:: bash
 
-        # NVMe SSD
         sudo parted /dev/nvme0n1 resizepart 1 100%
         sudo resize2fs /dev/nvme0n1p1
 
+     For a USB storage device:
+
      .. code-block:: bash
 
-        # USB storage device
         sudo parted /dev/sda resizepart 1 100%
         sudo resize2fs /dev/sda1
 
@@ -220,7 +240,7 @@ When booting the R-Car V4H SH from an NVMe SSD or a USB storage device, the foll
    Code: b9080c20 f9400660 b9480c00 d5033fbf (368ffe40)
    Resetting CPU ...
 
-   ▒esetting ...
+   Resetting ...
 
 After this message, the board resets the CPU again and boots successfully. This has no effect on system operation, and the message can be safely ignored.
 

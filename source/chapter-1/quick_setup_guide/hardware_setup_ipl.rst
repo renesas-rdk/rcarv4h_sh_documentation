@@ -1,4 +1,6 @@
-Common hardware setup
+.. _sh_common_hardware_setup:
+
+Common Hardware Setup
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. caution::
@@ -13,7 +15,7 @@ Common hardware setup
 
    Before you connect the power supply, make sure the button is in the **OFF** position, that is,
    released and sticking out. Then connect the power supply and press the button once so that it
-   latches down to the **ON** position - the board now powers on.
+   latches down to the **ON** position — the board now powers on.
    You should not connect the power supply while the button is in the **ON** position, as this may damage the board.
 
    Similarly, to power off the board, press the button once so that it pops back out to the **OFF**
@@ -52,7 +54,7 @@ your host PC.
 
 .. _sh_serial_console:
 
-Serial console channels
+Serial Console Channels
 """""""""""""""""""""""
 
 The board has two serial devices. **ChA (HSCIF0)** is the one mainly used, and is the channel
@@ -88,7 +90,7 @@ the procedures in this guide connect to:
 
    Download and install the Windows version (``.exe``).
 
-IPL flashing requirements
+IPL Flashing Requirements
 """""""""""""""""""""""""
 
 - The software package downloaded and extracted on the host PC.
