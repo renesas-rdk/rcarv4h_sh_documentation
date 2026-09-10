@@ -21,6 +21,9 @@ Software Environment
      - Username: **ubuntu** | Password: **ubuntu**
    * - **ROS 2 Distribution**
      - Tested with **ROS 2 Jazzy**
+   * - **Package Repository**
+     - Custom apt repository for R-Car V4H SH packages, pre-configured on the shipped image:
+       https://apt.uxpai.dev (suite ``noble``, component ``main``, ``rcarv4h``).
 
 Hardware Environment
 ^^^^^^^^^^^^^^^^^^^^
