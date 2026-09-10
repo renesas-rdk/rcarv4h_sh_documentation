@@ -83,7 +83,7 @@ Quick Software Setup Instructions
 
    .. code-block:: bash
 
-      vcs import < ./ros2_demo_workspace/rcar-v4h/vcs_manifests/rcar-v4h_rock_paper_scissors.target.lock.repos
+      vcs import < ./ros2_demo_workspace/vcs_manifests/rcar-v4h/rock_paper_scissors.target.lock.repos
 
    Every repository the demo needs is cloned into the ``src/`` folder of the workspace, each
    pinned to the revision the manifest locks.
