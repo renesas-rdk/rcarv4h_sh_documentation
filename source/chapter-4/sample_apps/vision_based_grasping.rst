@@ -52,6 +52,12 @@ pick-and-place mission up to three times, then returns the arm home.
 Hardware Setup
 """"""""""""""
 
+.. note::
+
+   This demo requires several 3D-printed parts. Download the STL files from the
+   `robot_printables GitHub repository <https://github.com/renesas-rdk/robot_printables>`_
+   and print them before starting.
+
 #. Complete the :ref:`Prerequisites for Running Sample Applications <sample_apps_prerequisites>`.
 
 #. Connect an Intel RealSense D4xx depth camera to the R-Car V4H SH board.
@@ -201,11 +207,41 @@ Source the workspace, then bring the stack up in this order, each part in its ow
    defaults to ``yolox_soft``, a model key in the ``config/models/models_config.yaml`` file of
    ``rcar_object_detection``.
 
-The detection topics keep their ``/yolox_soft_objects_detection/`` names, so the behavior layer
-works unchanged.
+   The detection topics keep their ``/yolox_soft_objects_detection/`` names, so the behavior
+   layer works unchanged.
+
+#. **Start the mission.** Nothing moves until the tree manager activates the engine. Wait for the
+   behavior-tree engine to report that it configured the stack:
+
+   .. code-block:: text
+
+      [behavior_tree_engine_node-7] [INFO] [xx.xx] [bt_engine]: Configured stack: Vision-Based Grasping Stack
+
+   Then start the tree:
+
+   .. code-block:: bash
+
+      ros2 service call /bt/tree_control bt_interfaces/srv/TreeControl "{command: start}"
+
+.. note::
+
+   The behavior-tree engine starts 10 seconds after the launch, so the servers advertise their
+   actions and services first, and the launch emits only the **CONFIGURE** lifecycle transition
+   about 2 seconds later. Configuring builds the tree from ``params.yaml`` but does not tick it.
+   **ACTIVATE** comes from the tree manager's ``start`` command.
 
 Controlling the Mission
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The tree manager exposes a single control service for the mission lifecycle, which accepts start,
-pause, resume, restart, and stop. Use it to drive the demo once both halves are running.
+``tree_manager_node`` serves ``/bt/tree_control`` (``bt_interfaces/srv/TreeControl``) with the
+commands ``start``, ``pause``, ``resume``, ``restart``, and ``stop``, and drives the ``bt_engine``
+lifecycle node accordingly. It also publishes a latched ``std_msgs/Bool`` on ``/bt/tree_paused``,
+consumed by the tree's ``PauseGate``, and a latched result string on ``/bt/tree_control_result``.
+
+.. code-block:: bash
+
+   ros2 service call /bt/tree_control bt_interfaces/srv/TreeControl "{command: pause}"
+   ros2 service call /bt/tree_control bt_interfaces/srv/TreeControl "{command: resume}"
+   ros2 service call /bt/tree_control bt_interfaces/srv/TreeControl "{command: stop}"
+
+Pause takes effect at the next pause gate; in-flight arm motion finishes first.

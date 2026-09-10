@@ -106,10 +106,16 @@ The demo uses the following hardware:
    * - Probe tool
      - Mounted on the arm for the board teach calibration described below.
 
+.. note::
+
+   This demo requires several 3D-printed parts. Download the STL files from the
+   `robot_printables GitHub repository <https://github.com/renesas-rdk/robot_printables>`_
+   and print them before starting.
+
 Complete the :ref:`Prerequisites for Running Sample Applications <sample_apps_prerequisites>`
 first. Mount the camera so that all 64 squares are visible and unobstructed, and place the board
-so that the arm can reach every square. Both calibrations below assume the board does not move
-afterwards.
+so that the arm can reach every square. Both calibrations below assume that neither the board nor
+the camera moves afterwards.
 
 .. important::
 
@@ -117,8 +123,8 @@ afterwards.
 
    #. Calibrate :ref:`the board to the robot <queens_hand_board_calibration>` once, and again
       whenever the board moves relative to the arm.
-   #. Calibrate :ref:`the camera to the board <queens_hand_camera_calibration>` once per camera
-      placement.
+   #. Calibrate :ref:`the camera to the board <queens_hand_camera_calibration>` once, and again
+      whenever the board or the camera moves.
    #. Bring up the robot.
    #. Start perception.
    #. Start the demo stack.
@@ -162,6 +168,15 @@ Quick Software Setup Instructions
 
 #. Deploy the result to the board and install the runtime dependencies there, as described in
    :ref:`Deploying and Installing Dependencies <sample_apps_deploy>`.
+
+#. Install the non-ROS runtime dependencies on the R-Car V4H SH board. The game logic needs the
+   Stockfish engine and the python-chess library, which ``rosdep`` does not provide:
+
+   .. code-block:: bash
+
+      ./install/renesas_demo_queens_hand/share/renesas_demo_queens_hand/setup/install_dependencies.sh
+
+   Run this once per board.
 
 .. _queens_hand_board_calibration:
 
@@ -249,49 +264,120 @@ The arm should stop at each square center. If it does not, repeat the calibratio
 Calibrating the Camera to the Board
 """""""""""""""""""""""""""""""""""
 
-The detector reports pieces in image pixels, so it needs to know which pixels belong to which
-square. ``chessboard_analyzer`` provides that mapping: it finds the four outer corners of the
-board, rectifies it to a top-down view, and writes the center of every square to a calibration
-file.
+The probe-teach file above holds the board geometry in the *robot's* frame. The detector needs a
+second calibration: the center of every square in the *camera image*, which is what it fits the
+image-to-board homography to with RANSAC before it can turn detections into a FEN.
 
-The detector reads that file through its ``calibrated_board_file`` parameter, which defaults to
-``/tmp/board_square_points.yaml``, and fits the image-to-board homography to all 64 centers with
-RANSAC.
+``chessboard_analyzer`` produces that mapping. It finds the four outer corners of the board,
+rectifies it to a top-down view, and writes the center of every square to
+``/tmp/board_square_points.yaml``. The detector reads that path through its
+``calibrated_board_file`` parameter.
 
-#. Start the perception launch, which brings up the camera and ``chessboard_analyzer``:
+Run the analyzer on the R-Car V4H SH board itself, with the chessboard empty so the corner
+detector sees the board pattern rather than the pieces, and with the camera already in its final
+position.
+
+#. Start the analyzer:
 
    .. code-block:: bash
 
-      ros2 launch renesas_demo_queens_hand chess_perception_realsense_camera_rcar.launch.py
+      ros2 launch chessboard_analyzer camera_chessboard_perspective_transformation.launch.py
 
-#. Clear the board so that the corner detector sees the board pattern rather than the pieces.
+   .. note::
 
-#. Trigger the detection:
+      This is a launch file of the ``chessboard_analyzer`` package, not of
+      ``renesas_demo_queens_hand``. The demo's own perception launch does not start the analyzer.
+
+#. Once the camera is streaming, trigger the calculation from a second terminal:
 
    .. code-block:: bash
 
       ros2 service call /chessboard_analyzer/trigger_calculate_squares std_srvs/srv/Trigger
 
-   On success the node writes ``/tmp/board_square_points.yaml``, holding each square keyed ``a1``
-   to ``h8`` with its image-pixel center and its deprojected 3D position.
+   A successful trigger writes the 64 square centers, keyed ``a1`` to ``h8`` with image-pixel and
+   deprojected 3D positions, to ``/tmp/board_square_points.yaml``. Check the analyzer's log for
+   the success message before continuing.
 
-#. Check the debug images the node saves under ``/tmp/chessboard_analyzer_debug`` to confirm the
-   corners were found correctly.
+#. Check the debug images under ``/tmp/chessboard_analyzer_debug`` to confirm the corners were
+   found correctly. Set ``save_debug_images:=true`` to have them written.
 
-The detector picks the file up as soon as it appears, and re-reads it whenever it changes on disk,
-so FEN publishing starts without restarting anything. Until a valid calibration exists the node
-warns and skips FEN output; the piece detections themselves are unaffected.
+#. Stop the calibration launch.
+
+   .. important::
+
+      The analyzer owns the RealSense camera, and the perception launch cannot open the camera
+      while the analyzer still holds it. Pass ``shutdown_after_calibration:=true`` to have the
+      launch shut itself down one second after a successful calibration.
+
+The launch accepts the following arguments:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 32 32 36
+
+   * - Argument
+     - Default
+     - Description
+   * - ``robot_plays_as``
+     - ``white``
+     - Which side the robot plays.
+   * - ``shutdown_after_calibration``
+     - ``false``
+     - Shut the launch down one second after a successful calibration.
+   * - ``save_debug_images``
+     - ``false``
+     - Save the corner-detection debug images.
+   * - ``debug_output_dir``
+     - ``/tmp/chessboard_analyzer_debug``
+     - Where those debug images are written.
+
+.. caution::
+
+   ``/tmp`` does not survive a reboot. Keep a copy of the file and put it back before starting the
+   perception launch, otherwise redo the calibration:
+
+   .. code-block:: bash
+
+      # Right after calibrating
+      cp /tmp/board_square_points.yaml ~/board_square_points.yaml
+
+      # After a reboot
+      cp ~/board_square_points.yaml /tmp/board_square_points.yaml
+
+The detector picks the file up as soon as it appears and re-reads it whenever it changes on disk,
+so FEN publishing starts without restarting anything, and restoring the copy also works while the
+perception stack is already running. Until a valid calibration exists the node warns and skips FEN
+output; the piece detections themselves are unaffected.
 
 .. note::
 
-   ``chessboard_analyzer`` labels the squares ``a1`` to ``h8`` according to its ``camera_position``
-   parameter, which describes where the camera sits relative to the board: ``white`` (the default,
-   0 degrees), ``side_left`` (90 degrees), ``black`` (180 degrees), or ``side_right``
-   (270 degrees). Set it to match your
-   physical setup, otherwise every square is labeled with a rotated name.
+   The ``camera_position`` setting in ``chessboard_analyzer``'s ``config/chess_board.yaml`` must
+   match where the camera actually sits, because it alone decides which image corner becomes
+   ``a1``:
 
-   The detector's own square lookup depends on this, so a wrong ``camera_position`` produces a
-   board state that looks plausible but is rotated.
+   .. list-table::
+      :header-rows: 1
+      :widths: 24 40 36
+
+      * - Value
+        - Camera placement
+        - ``a1`` lands at
+      * - ``white``
+        - At white's seat, 0 degrees
+        - Image bottom-left
+      * - ``side_left``
+        - Beside the board, 90 degrees
+        - Image bottom-right
+      * - ``black``
+        - At black's seat, 180 degrees
+        - Image top-right
+      * - ``side_right``
+        - Beside the board, 270 degrees
+        - Image top-left
+
+   Pick the value whose ``a1`` corner matches your live image. The detector's own square lookup
+   depends on this, so a wrong ``camera_position`` produces a board state that looks plausible but
+   is rotated.
 
 Running the Demo
 """"""""""""""""
@@ -374,9 +460,47 @@ the stack up in this order, each in its own terminal.
    or resume from a given position, and ``pgn_file`` with ``ply`` to replay a PGN up to a given
    number of half-moves. Sample games are in ``config/pgn/``.
 
+#. **Start the game.** Nothing moves until the game manager activates the engine. Wait for the
+   behavior-tree engine to report that it configured the stack:
+
+   .. code-block:: text
+
+      [behavior_tree_engine_node-7] [INFO] [1783596452.058739786] [bt_engine]: Configured stack: Chess Playing
+
+   Then start the game:
+
+   .. code-block:: bash
+
+      ros2 service call /chess/game_control chess_interfaces/srv/GameControl "{command: start}"
+
 #. **Play.**
 
    The demo is ready to play chess against a human. Open Foxglove to see the board state, the
    detected pieces, and the 3D pose of each square. Load the
    ``renesas_demo_queens_hand/config/foxglove/chess_demo.json`` layout and control the game from
    its buttons.
+
+.. note::
+
+   The behavior-tree engine starts 10 seconds after the launch, 12 seconds in the mock bringup, so
+   the servers advertise their actions and services first. The launch then emits only the
+   **CONFIGURE** lifecycle transition about 2 seconds later, which builds the tree but does not
+   tick it. **ACTIVATE** comes from the game manager's ``start`` command.
+
+Game Control
+~~~~~~~~~~~~
+
+The game manager serves ``/chess/game_control`` (``chess_interfaces/srv/GameControl``) with the
+commands ``start``, ``pause``, ``resume``, ``restart``, and ``stop``, and drives the ``bt_engine``
+lifecycle accordingly. ``restart`` optionally takes a ``fen:`` field. The manager also publishes a
+latched ``/chess/game_paused``, consumed by the tree's ``GamePauseGate``, and
+``/chess/game_control_result``.
+
+.. code-block:: bash
+
+   ros2 service call /chess/game_control chess_interfaces/srv/GameControl "{command: pause}"
+   ros2 service call /chess/game_control chess_interfaces/srv/GameControl "{command: resume}"
+   ros2 service call /chess/game_control chess_interfaces/srv/GameControl "{command: stop}"
+
+Pause takes effect at the next turn boundary. The Foxglove layouts provide service-call buttons
+for every command.
