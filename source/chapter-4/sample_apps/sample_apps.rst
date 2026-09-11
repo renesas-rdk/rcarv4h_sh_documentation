@@ -6,8 +6,9 @@ Sample Applications
 This section introduces sample ROS 2 applications developed for the Renesas R-Car V4H SH platform,
 demonstrating various functionalities and use cases.
 
-Every application combines a perception front end from the :ref:`Model Zoo <model_zoo>` with a
-robot control back end, and every one can be visualized in Foxglove Studio.
+The first two applications run a perception package from the :ref:`Model Zoo <model_zoo>` on its
+own. The others combine such a perception front end with a robot control back end. Every one can be
+visualized in Foxglove Studio.
 
 .. _sample_apps_prerequisites:
 
@@ -155,6 +156,12 @@ The following table lists the sample applications and the perception package eac
    * - Application
      - What it demonstrates
      - Perception
+   * - :ref:`Static / Camera-based Hand Landmark Estimation <hand_landmark>`
+     - Hand detection and 21-point landmark estimation on a static image or camera input.
+     - ``rcar_pose_estimation``
+   * - :ref:`Static Object Detection <static_object_detection>`
+     - YOLOv5, YOLOv8, and YOLOX detection on bundled test images.
+     - ``rcar_object_detection``
    * - :ref:`Vision-Based Dexterous Hand <sample_app_dexhand>`
      - A dexterous hand mimics the operator's hand in real time from camera input.
      - ``rcar_pose_estimation``
@@ -177,6 +184,8 @@ platform.
 .. toctree::
    :maxdepth: 1
 
+   hand_landmark
+   static_object_detection
    dexhand
    dexhand_with_sensors
    rock_paper_scissors
