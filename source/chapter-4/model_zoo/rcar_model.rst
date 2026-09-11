@@ -183,20 +183,26 @@ This is the complete configuration shipped for the ``yolox_rps`` model of
        ]
      },
      "models": {
-       "dsp0": { "file": "models/model_dsp0.so", "runtime": "tvm" }
+       "detect0": { "file": "models/model_detect0.so", "runtime": "tvm", "input_name": "images" }
      },
      "connections": [
-       "in0[0] -> dsp0[0]",
-       "dsp0[0] -> out0[0]",
-       "dsp0[1] -> out0[1]",
-       "dsp0[2] -> out0[2]"
+       "in0[0] -> detect0[0]",
+       "detect0[0] -> out0[0]",
+       "detect0[1] -> out0[1]",
+       "detect0[2] -> out0[2]"
      ],
-     "workers": [ "dsp0" ]
+     "workers": [ "detect0" ]
    }
 
 One input port, one model, one output port carrying three tensors. The three ``dequantize``
 entries under ``out0`` exist because three ``connections`` edges land on it; that count has to
 match.
+
+The optional ``input_name`` field binds the frame your application feeds to the model's graph
+input by name, here the ``images`` input of the exported YOLOX model. Without it the frame goes to
+input index 0. Set it for artifacts compiled with REACTION ``task: tvm_cch``: that task can expose
+some of the model's constant tensors as extra graph inputs, so index 0 is not necessarily the
+image. Every TVM model shipped in the Model Zoo sets it.
 
 The ``quantize`` and ``dequantize`` scales are in this file rather than in the model because the
 artifacts are compiled with ``remove_input_quantize`` and ``remove_output_dequantize`` set, which
@@ -229,9 +235,8 @@ The following table maps each JSON key to the callback that receives its name:
      - ``on_result("<name>", result)``
      - The result this stage produced. Called once per inference, per terminal stage.
 
-For the graph above, ``make_input()`` is called with ``"in0"``, ``make_model()`` with ``"dsp0"``,
-and
-every inference arrives at ``on_result`` tagged ``"dsp0"``.
+For the graph above, ``make_input()`` is called with ``"in0"``, ``make_model()`` with
+``"detect0"``, and every inference arrives at ``on_result`` tagged ``"detect0"``.
 
 A Two-Lane Cascade
 ~~~~~~~~~~~~~~~~~~
@@ -245,34 +250,30 @@ two models, abridged here to the name-bearing keys:
    {
      "inputs":  { "in0": { }, "in1": { } },
      "models": {
-       "mediapipe_det": { "file": "models/mediapipe_hand_detector/model_dsp1.so", "runtime": "tvm" },
-       "mediapipe_dsp": { "file": "models/mediapipe_hand_landmark/model_dsp0.so", "runtime": "tvm" }
+       "mediapipe_det":      { "file": "models/mediapipe_hand_detector/model.so",
+                               "runtime": "tvm", "input_name": "image" },
+       "mediapipe_landmark": { "file": "models/mediapipe_hand_landmark/model.so",
+                               "runtime": "tvm", "input_name": "input_1" }
      },
      "connections": [
        "in0[0] -> mediapipe_det[0]",
        "mediapipe_det[0] -> out0[0]",
        "mediapipe_det[1] -> out0[1]",
-       "in1[0] -> mediapipe_dsp[0]",
-       "mediapipe_dsp[0] -> out1[0]",
-       "mediapipe_dsp[1] -> out1[1]",
-       "mediapipe_dsp[2] -> out1[2]",
-       "mediapipe_dsp[3] -> out1[3]"
+       "in1[0] -> mediapipe_landmark[0]",
+       "mediapipe_landmark[0] -> out1[0]",
+       "mediapipe_landmark[1] -> out1[1]",
+       "mediapipe_landmark[2] -> out1[2]",
+       "mediapipe_landmark[3] -> out1[3]"
      ],
-     "workers": [ "mediapipe_det", "mediapipe_dsp" ]
+     "workers": [ "mediapipe_det", "mediapipe_landmark" ]
    }
 
 The node's ``make_model()`` dispatches on those two names to return a palm detector or a landmark
 model, and ``make_input()`` returns a different ``FrameSource`` for ``in0`` and ``in1``: the camera
 feeds ``in0``, and the detector's result callback pushes the cropped hand into the source behind
 ``in1``. Listing both stages under ``workers`` schedules them as independent threads, so the
-landmark stage works on one frame while the detector works on the next.
-
-.. note::
-
-   Scheduling two stages as parallel workers only buys real concurrency when their ``.so``
-   artifacts target different accelerator lanes. That affinity is fixed at REACTION compile time
-   by the file contents, not by the ``models.<name>`` label, which is why the two files above are
-   ``model_dsp1.so`` and ``model_dsp0.so``.
+landmark stage works on one frame while the detector works on the next. Each stage loads its own
+``.so``; edit the ``models.<name>.file`` paths to swap in another variant.
 
 .. _reading_quant_values:
 
@@ -379,6 +380,8 @@ The following rules apply to every ``exec_config.json``:
 - The length of an ``outputs.<port>`` array must match the number of ``connections`` edges landing
   on that port.
 - ``outputs.<port>[i]`` may be ``{}`` when that tensor needs no dequantization.
+- ``models.<name>.input_name`` is optional. Set it to the graph input that receives the frame
+  whenever the compiled model has more than one graph input, as ``tvm_cch`` artifacts can.
 - ``workers``, ``steps``, and ``threads`` are mutually exclusive at the top level. The shipped
   R-Car configurations use ``workers``.
 
@@ -431,10 +434,6 @@ In detail:
 - **Only one graph may be live at a time.** Two ``GraphHandle`` instances cannot run
   concurrently. Destroying a handle releases all per-graph state, so calling ``start_graph()``
   again once the earlier handle is destroyed does work.
-- **Multiple models in one process require different cores.** Several TVM ``.so`` artifacts
-  coexist in one process only if each targets a different accelerator lane. The target lane is
-  baked into the ``.so`` at REACTION compile time: the file contents pick the lane, the
-  ``models.<name>`` label does not. Two artifacts targeting the same lane collide at load time.
 - **BaseModel instances are not thread-safe.** The letterbox state cached during preprocessing
   is read back during coordinate mapping, so one instance must be driven from a single worker. The
   runner already enforces this; it only matters if you call a model manually outside

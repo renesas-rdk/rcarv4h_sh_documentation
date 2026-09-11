@@ -22,7 +22,7 @@ Perception: One Node, Three Models
 """"""""""""""""""""""""""""""""""
 
 On the R-Car V4H SH all three models run inside the single ``dexhand_tri_cascade`` node, from one
-``exec_config.json``, with one model per accelerator lane:
+``exec_config.json``, with one lane per model:
 
 .. list-table::
    :header-rows: 1
@@ -37,8 +37,8 @@ On the R-Car V4H SH all three models run inside the single ``dexhand_tri_cascade
    * - YOLOX soft-object detection
      - Classifies the object in the second camera's frame.
 
-They cannot be split across separate nodes: the graph context of ``rcar_model`` is process-global
-and the accelerator is exclusive to one process at model load time. See
+They cannot be split across separate nodes, because the graph context of ``rcar_model`` is
+process-global. See
 :ref:`The rcar_model Framework <rcar_model>` for the underlying constraint.
 
 The node publishes the same ``PoseArray`` wire format and topic names as the equivalent

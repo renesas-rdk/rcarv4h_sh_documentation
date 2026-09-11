@@ -173,6 +173,9 @@ bounding box and the 21-point hand skeleton, the per-stage timing overlays, and 
 image; the camera launch files start ``v4l2_camera`` and take a ``video_device`` argument that
 defaults to ``/dev/video0``.
 
+The camera launch files also set ``TVM_NUM_THREADS=1``. Inference runs on the accelerator, so
+every extra TVM worker thread only busy-waits on a CPU core without adding throughput.
+
 Building
 """"""""
 

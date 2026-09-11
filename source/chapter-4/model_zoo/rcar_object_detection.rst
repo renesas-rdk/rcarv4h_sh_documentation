@@ -98,7 +98,7 @@ The following table lists the topics the node subscribes to and publishes:
      - ``std_msgs/msg/String``
 
 For the multi-lane YOLOv5 node the lane index is taken from the trailing digits of the model or
-input name in the JSON, so ``dsp0``, ``nms3``, and ``in2`` map to lanes 0, 3, and 2.
+input name in the JSON, so ``detect0``, ``nms3``, and ``in2`` map to lanes 0, 3, and 2.
 
 Provided Models
 ~~~~~~~~~~~~~~~
@@ -118,25 +118,27 @@ The following table lists the models shipped with the package:
      - 80 (COCO)
      - 0.4
      - 0.45
-     - ``dsp0`` ``dsp3`` (TVM) plus ``nms0`` ``nms3`` (ONNX)
+     - ``detect0`` to ``detect3`` (TVM) plus ``nms0`` to ``nms3`` (ONNX)
    * - ``yolov8_rps``
      - 3 (paper, rock, scissor)
      - 0.6
      - 0.3
-     - ``dsp0`` (TVM)
+     - ``detect0`` (TVM)
    * - ``yolox_rps``
      - 3 (paper, rock, scissor)
      - 0.6
      - 0.3
-     - ``dsp0`` (TVM)
+     - ``detect0`` (TVM)
    * - ``yolox_soft``
      - 5 (carrot, coke, egg, pp_cup, sponge)
      - 0.7
      - 0.45
-     - ``dsp0`` (TVM)
+     - ``detect0`` (TVM)
 
 Class names, thresholds, and the graph wiring live in ``config/models/models_config.yaml`` and in
-each model's ``config/models/<name>/exec_config.json``.
+each model's ``config/models/<name>/exec_config.json``. The compiled models ship with the package
+under ``config/models/<name>/models/``; every TVM model is compiled with REACTION
+``task: tvm_cch``.
 
 Launch Files
 ~~~~~~~~~~~~
@@ -192,8 +194,10 @@ Adding a Model
         iou_threshold: 0.45
         input_order: rgb   # optional, default 'rgb'; set 'bgr' for BGR-trained models
 
-   Stage names such as ``dsp0`` and ``nms1`` are read from the ``models`` section of the JSON at
-   startup. Do not declare them in the YAML file.
+   Stage names such as ``detect0`` and ``nms1`` are read from the ``models`` section of the JSON
+   at startup. Do not declare them in the YAML file. For a ``tvm_cch`` model, also set
+   ``input_name`` on its ``models`` entry, as described in
+   :ref:`The exec_config.json File <exec_config_schema>`.
 
 #. Rebuild, then run with ``-p model_type:=<name>``.
 
