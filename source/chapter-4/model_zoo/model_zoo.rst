@@ -137,31 +137,10 @@ and best practices.
    AGPL-3.0 license of the upstream Ultralytics models they target. Check the license of every
    package you link into a product.
 
-.. _act_policy_support:
-
-Action Chunking Transformer (ACT) Policy Support
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Beyond the perception models listed above, the R-Car V4H SH also runs Action Chunking Transformer
-(ACT), a Vision-Language-Action policy for imitation-learning based manipulation. The
-policy takes camera images and the current robot state and predicts a chunk of future actions,
-which the robot executes directly. It is compiled for the CNN-IP with the same REACTION toolchain
-used for every other model in this chapter, and it runs on the board in real time.
-
-ACT is not part of the public Model Zoo. The policy weights, the model configuration, the training
-data recipe, and the integration code are not published with this documentation, and none of the
-packages listed above contain them.
-
-.. note::
-
-   If you want to evaluate or deploy an ACT policy on the R-Car V4H SH, get in touch so we can
-   discuss your use case directly. Open an issue on
-   `renesas-rdk <https://github.com/renesas-rdk/rcarv4h_sh_documentation>`_ or contact your
-   Renesas representative. Please do not expect implementation details in this documentation.
-
 .. toctree::
    :maxdepth: 1
    :caption: Model Zoo Contents
+   :hidden:
 
    rcar_model
    rcar_object_detection

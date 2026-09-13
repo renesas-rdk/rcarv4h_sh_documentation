@@ -181,6 +181,10 @@ The following table lists the sample applications and the perception package eac
 Follow the instructions in the respective sections to run each application on the R-Car V4H SH
 platform.
 
+Beyond these demos, the board also runs an
+:ref:`Action Chunking Transformer (ACT) policy <act_policy_support>`, which is not published with
+this documentation.
+
 .. toctree::
    :maxdepth: 1
 
@@ -191,3 +195,4 @@ platform.
    rock_paper_scissors
    queens_hand
    vision_based_grasping
+   act_policy
