@@ -3,6 +3,13 @@
 Dexterous Hand with Tactile Sensors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/dexhand_fusion.png
+   :align: center
+   :alt: DexHand Demo with Tactile Sensors
+   :width: 600px
+
+   Dexterous Hand Demo with Tactile Sensors
+
 `renesas_demo_dexhand_w_sensors <https://github.com/renesas-rdk/renesas_demo_dexhand_w_sensors>`_
 extends the :ref:`Vision-Based Dexterous Hand <sample_app_dexhand>` demo with a second camera, the
 Renesas SSC tactile glove, and grip control that adapts to what the hand is about to pick up.

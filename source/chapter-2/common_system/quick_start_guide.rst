@@ -27,6 +27,15 @@ one target per component:
        the BL31 blob and the initramfs. Kernel modules are not part of it and are deployed to the
        root filesystem separately.
 
+The following figure shows the overall workflow covered in this section, from setting up the build
+host to deploying the FIT image and kernel modules to the board and verifying the update:
+
+.. figure:: ../../images/common_system_workflow_overview.png
+   :align: center
+   :alt: Common system configuration workflow overview
+
+   Common system configuration workflow overview
+
 Prerequisites
 ^^^^^^^^^^^^^
 

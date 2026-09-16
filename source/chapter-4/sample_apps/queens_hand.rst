@@ -3,6 +3,13 @@
 Queen's Hand Chess Robot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/chess_pieces.png
+   :align: center
+   :alt: Queen's Hand Chess Robot Demo
+   :width: 600px
+
+   Queen's Hand Chess Robot Demo
+
 The `renesas_demo_queens_hand <https://github.com/renesas-rdk/renesas_demo_queens_hand>`_ package is the top-level launch, node, and configuration package
 for the Queen's Hand chess-playing robot: an Agilex Piper arm fitted with a dexterous hand
 physically plays chess against a human, driven by a BehaviorTree.CPP mission with Stockfish as the

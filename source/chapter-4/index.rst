@@ -16,6 +16,16 @@ The following topics are covered in this section:
 - **Sample Applications:** Examples of ROS 2 applications demonstrating various functionalities and use cases.
 - **Other Concepts:** Additional concepts relevant to R-Car V4H SH ROS 2 development.
 
+The following figure shows the overall workflow covered in this chapter, from setting up the
+cross-build environment on the host PC to running, debugging, and visualizing an application on
+the board:
+
+.. figure:: ../images/app_dev_workflow_overview.png
+   :align: center
+   :alt: Application development workflow overview
+
+   Application development workflow overview
+
 .. toctree::
    :maxdepth: 2
    :caption: Application Development

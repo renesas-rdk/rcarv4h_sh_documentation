@@ -54,6 +54,13 @@ Before running any sample application, complete the following common setup steps
 Connecting the Demo Hardware
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/v4h_demo_setup.png
+   :align: center
+   :alt: Connect the demo hardware
+   :width: 600px
+
+   Connect the demo hardware
+
 Every peripheral these demos use attaches to the R-Car V4H SH over USB:
 
 .. list-table::

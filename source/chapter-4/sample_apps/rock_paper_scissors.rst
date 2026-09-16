@@ -3,6 +3,13 @@
 Rock-Paper-Scissors
 ^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/rps.png
+   :align: center
+   :alt: Rock Paper Scissors Demo
+   :width: 600px
+
+   Rock Paper Scissors Demo
+
 The `renesas_demo_rps <https://github.com/renesas-rdk/renesas_demo_rps>`_ package plays rock-paper-scissors against a human. A USB camera watches
 the player's hand, the ``rcar_object_detection`` detector classifies the gesture, and the game
 logic drives a dexterous hand through the round.

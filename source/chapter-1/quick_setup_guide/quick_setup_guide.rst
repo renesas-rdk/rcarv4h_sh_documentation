@@ -33,6 +33,14 @@ with Ubuntu 24.04 and ROS 2 Jazzy running on the R-Car V4H SH:
    * - :ref:`First Boot and Software Setup <first_time_boot_setup>`
      - Log in, expand the root partition to the full microSD card, and install ROS 2 Jazzy.
 
+The following figure shows the same path, and where each step is carried out:
+
+.. figure:: ../../images/quick_setup_workflow_overview.png
+   :align: center
+   :alt: Quick start guide workflow overview
+
+   Quick start guide workflow overview
+
 .. _sh_software_package:
 
 Downloading the software package
