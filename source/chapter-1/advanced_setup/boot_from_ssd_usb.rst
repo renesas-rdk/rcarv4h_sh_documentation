@@ -27,23 +27,43 @@ The boot flow is the same for both devices: write the root file system image to 
 Hardware Required
 """""""""""""""""
 
-- R-Car V4H SH board with power supply and serial console (see :ref:`Quick Setup Guide <quick_setup_sh_guide>`).
+- R-Car V4H SH board set up as described in :ref:`Common Hardware Setup <sh_common_hardware_setup>`:
+
+  - Fan installation
+  - Power supply connection
+  - Serial connection for terminal access
+  - Ethernet connection for network access
+
+- A USB Power Delivery adapter rated at 65 W or higher, and a cable that complies with the USB Power Delivery (USB PD) standard. Using a non-USB PD power supply may damage the R-Car V4H SH board.
 - One of the following storage devices:
 
   - M.2 NVMe SSD.
   - USB storage device, such as a USB flash drive or a USB SSD.
 
-- A USB Power Delivery adapter rated at 65 W or higher.
-
 Hardware Connection
 """""""""""""""""""
+
+.. caution::
+
+   Before you connect any hardware or power on the board:
+
+   * **Hot!** Do not touch the R-Car V4H (main chip) directly. **The fan must be properly installed
+     before powering on the board** to prevent the R-Car V4H from overheating and failing.
+   * Do not touch the board while the USB PD power supply is connected. Touching the bare board
+     may cause a short circuit and failure.
+   * The Power Control button (SW1) is a latching (push-push) button: **OFF** when it is released
+     and sticks out, **ON** when it is pressed down and stays latched. Connect the power supply only
+     while the button is **OFF**, then press it once to power on. To power off, press it once so
+     that it pops back out to **OFF**, and only then remove the power supply. Connecting or
+     removing the power supply while the button is **ON** may damage the board.
+   * Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
 
 The following image shows how to connect the M.2 NVMe SSD to the onboard M.2 slot of the R-Car V4H SH:
 
 .. figure:: ../../images/ssd_connection.png
    :alt: SSD Connection Diagram
    :align: center
-   :width: 600px
+   :width: 800px
 
    SSD Connection Diagram
 
@@ -57,34 +77,17 @@ Detailed Steps
    The following steps erase all existing data on the storage device. Back up anything you need
    before proceeding.
 
-.. caution::
-
-   Handle the M.2 NVMe SSD with care to avoid damage from static electricity.
-
-.. important::
-
-   - Connect the M.2 NVMe SSD to the R-Car V4H SH board before powering on the board.
-   - Connect the USB storage device before you enter the U-Boot prompt, so that U-Boot can detect it.
-
-.. note::
-
-   The following steps assume that the NVMe SSD is detected as ``/dev/nvme0n1`` and that the USB storage device is detected as ``/dev/sda``.
-
-   If your system detects the storage device with a different device name, replace it accordingly in the commands and examples.
+The following steps assume that the NVMe SSD is detected as ``/dev/nvme0n1`` and that the USB storage device is detected as ``/dev/sda``. If your system detects the storage device with a different device name, replace it accordingly in the commands and examples.
 
 Storage Device Preparation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
-
-   The following steps will guide you to flash the root filesystem image to the NVMe SSD or to the USB storage device. If the device already holds a root filesystem, you can skip the flashing steps and proceed to :ref:`configure the bootloader <ssd_bootloader>`.
-
-   A USB storage device can also be flashed on a host PC exactly like a microSD card, as described in the :ref:`Quick Setup Guide <quick_setup_sh_guide>`. In that case, skip to :ref:`configure the bootloader <ssd_bootloader>` as well.
+The following steps flash the root filesystem image to the NVMe SSD or to the USB storage device. If the device already holds a root filesystem, skip to :ref:`configure the bootloader <ssd_bootloader>`. A USB storage device can also be flashed on a host PC exactly like a microSD card, as described in the :ref:`Quick Setup Guide <quick_setup_sh_guide>`; in that case, skip to :ref:`configure the bootloader <ssd_bootloader>` as well.
 
 #. Prepare the storage device:
 
-   - For an NVMe SSD: insert the M.2 NVMe SSD directly into the onboard M.2 slot of the R-Car V4H SH.
-   - For a USB storage device: plug it into one of the USB 3.0 Type-A ports of the R-Car V4H SH.
+   - For an NVMe SSD: with the board powered off, insert the M.2 NVMe SSD directly into the onboard M.2 slot of the R-Car V4H SH.
+   - For a USB storage device: plug it into one of the USB 3.0 Type-A ports of the R-Car V4H SH. Connect it before you enter the U-Boot prompt, so that U-Boot can detect it.
 
 #. Boot from the microSD card:
 
@@ -244,8 +247,4 @@ When booting the R-Car V4H SH from an NVMe SSD or a USB storage device, the foll
 
 After this message, the board resets the CPU again and boots successfully. This has no effect on system operation, and the message can be safely ignored.
 
-This issue only occurs when the board is reset with the Reset button. It does not occur when the board is restarted with the ``reboot`` command or by pressing the Power button.
-
-.. note::
-
-   This issue is under investigation and will be fixed in a future release.
+This issue only occurs when the board is reset with the Reset button. It does not occur when the board is restarted with the ``reboot`` command or by pressing the Power button. This issue is under investigation and will be fixed in a future release.

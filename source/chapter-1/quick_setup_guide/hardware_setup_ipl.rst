@@ -6,6 +6,8 @@ Common Hardware Setup
 .. caution::
 
    The power supply for the R-Car V4H SH board must be a USB Power Delivery adapter rated at 65 W or higher.
+   Use only a power supply and cable that comply with the USB Power Delivery (USB PD) standard.
+   Using a non-USB PD power supply may damage the R-Car V4H SH board.
 
    The Power Control button (SW1) is a latching (push-push) button, so its physical position tells you
    the state:
@@ -34,7 +36,10 @@ The following image shows the hardware setup for bringing up the board:
 
 .. caution::
 
-   The fan must be properly installed before powering on the board.
+   * **Hot!** Do not touch the R-Car V4H (main chip) directly. The fan must be properly installed
+     before powering on the board to prevent the R-Car V4H from overheating and failing.
+   * Do not touch the board while the USB PD power supply is connected. Touching the bare board
+     may cause a short circuit and failure.
 
 The setup includes:
 
