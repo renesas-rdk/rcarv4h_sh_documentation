@@ -146,6 +146,24 @@ Procedure
 
 .. note::
 
+   Flashing a new IPL does not reset the U-Boot environment saved in the SPI flash. Variables
+   saved by an earlier IPL version can be incompatible with the new U-Boot and prevent the board
+   from booting correctly. After you flash a new IPL, it is recommended to reset the U-Boot
+   environment to its defaults.
+
+   Power on the board, press any key to stop the autoboot process, and run the following
+   commands at the U-Boot prompt:
+
+   .. code-block:: bash
+
+      env default -a
+      saveenv
+
+   This also removes any variables that you set yourself, such as ``bootcmd`` or ``conf_append``.
+   Set them again if you need them.
+
+.. note::
+
    On Linux, the script uses the serial device ``/dev/ttyUSB*``. By default this device cannot
    be accessed by an unprivileged user. Either run the script with ``sudo``, or add your user
    to the ``dialout`` group:
