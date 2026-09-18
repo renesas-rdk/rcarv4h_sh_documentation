@@ -3,6 +3,13 @@
 Static / Camera-based Hand Landmark Estimation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/landmark.png
+   :align: center
+   :alt: Hand Landmark Demo
+   :width: 600px
+
+   Hand Landmark Demo
+
 The `rcar_pose_estimation <https://github.com/renesas-rdk/rcar_pose_estimation>`_ package detects
 hands in an image and estimates 21 landmarks on each one. It runs on its own, without a robot, and
 is the perception stage that the :ref:`Vision-Based Dexterous Hand <sample_app_dexhand>` demo is

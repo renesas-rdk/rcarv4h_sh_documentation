@@ -3,6 +3,13 @@
 Vision-Based Dexterous Hand
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/demo_dexhand.jpg
+   :align: center
+   :alt: DexHand Demo
+   :width: 600px
+
+   Dexterous Hand Demo
+
 The `renesas_demo_dexhand <https://github.com/renesas-rdk/renesas_demo_dexhand>`_ package demonstrates dexterous hand control driven by vision. A USB
 camera watches the operator's hand, the ``rcar_pose_estimation`` YOLOX-to-MediaPipe cascade
 extracts 21 hand landmarks, and both a virtual and a physical dexterous hand mirror the motion.

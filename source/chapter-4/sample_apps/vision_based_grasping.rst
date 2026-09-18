@@ -3,6 +3,13 @@
 Vision-Based Grasping
 ^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/vbg.png
+   :align: center
+   :alt: Vision-Based Grasping Demo
+   :width: 600px
+
+   Vision-Based Grasping Demo
+
 The `renesas_vision_based_grasping <https://github.com/renesas-rdk/renesas_vision_based_grasping>`_ package is the top-level launch and configuration package
 for the vision-based pick-and-place demo: an Agilex Piper arm with a dexterous hand picks objects
 detected by a RealSense camera and drops them in a bin, driven by a BehaviorTree.CPP mission.

@@ -3,6 +3,13 @@
 Static Object Detection
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/static_objects.png
+   :align: center
+   :alt: Static Object Detection Demo
+   :width: 600px
+
+   Static Object Detection Demo
+
 The `rcar_object_detection <https://github.com/renesas-rdk/rcar_object_detection>`_ package runs
 object detection on bundled test images. It runs on its own, without a camera or a robot. It is
 the quickest way to check the YOLOv5 COCO detector on your board, and the gesture detectors

@@ -3,6 +3,13 @@
 Queen's Hand Chess Robot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: ../../images/chess_robot.png
+   :align: center
+   :alt: Queen's Hand Chess Robot Demo
+   :width: 600px
+
+   Queen's Hand Chess Robot Demo
+
 The `renesas_demo_queens_hand <https://github.com/renesas-rdk/renesas_demo_queens_hand>`_ package is the top-level launch, node, and configuration package
 for the Queen's Hand chess-playing robot: an Agilex Piper arm fitted with a dexterous hand
 physically plays chess against a human, driven by a BehaviorTree.CPP mission with Stockfish as the
@@ -11,6 +18,13 @@ game brain.
 Perception runs ``rcar_chess_pieces_detection`` on the R-Car V4H SH: a 12-class YOLOv8 detector
 turns the camera image into a Forsyth-Edwards Notation (FEN) board state. See
 :ref:`rcar_chess_pieces_detection <chess_pieces_detection_pkg>` for the detector itself.
+
+.. figure:: ../../images/chess_pieces.png
+   :align: center
+   :alt: Chess piece detection and the reconstructed board state
+   :width: 600px
+
+   Chess Piece Detection and the Reconstructed Board State
 
 .. note::
 
