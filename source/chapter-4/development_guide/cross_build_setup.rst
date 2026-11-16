@@ -146,6 +146,41 @@ Docker Environment Setup
 
    Restart the container first and check whether the auto update worked by using the ``docker logs`` command. If the auto update fails, enter the container and resolve the conflict manually.
 
+Installing the AI Runtime Libraries in the Sysroot
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. important::
+
+   **Required to cross-build AI applications.** Applications that use the HyCo TVM runtime or
+   ONNX Runtime need these libraries and their headers in the target sysroot. Install the
+   ``libv4h-ai-sdk-dev`` package into the ARM64 target sysroot of the container as described
+   below, so that the sysroot matches the package on the board. If the sysroot still has the
+   older ``librcar-xos-v4h-dev`` package, ``libv4h-ai-sdk-dev`` takes over its files.
+
+#. Build the package as described in
+   :ref:`Installing the AI Runtime Libraries <sh_ai_runtime_package>`, with Option A on the host
+   PC or Option B on the board. The ``.deb`` file is in the ``~/v4h-ai-deb`` directory. Copy it
+   into your ROS 2 workspace on the host machine (default: ``$HOME/ros2_ws``). The workspace is
+   mounted in the container as ``$ROS2_WS``.
+
+#. Inside the container, copy the package into the sysroot and install it:
+
+   .. code-block:: bash
+
+      cp $ROS2_WS/libv4h-ai-sdk-dev_3.47.0-1_arm64.deb $ARM64_SYSROOT/tmp/
+      arm64-chroot dpkg -i /tmp/libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
+
+   Use the name of the ``.deb`` file you built.
+
+#. Check that the libraries are in the sysroot:
+
+   .. code-block:: bash
+
+      ls $ARM64_SYSROOT/usr/lib/aarch64-linux-gnu/ | grep -E 'libtvm_runtime|libonnxruntime'
+
+   The headers are in ``$ARM64_SYSROOT/usr/include``. The same libraries must also be installed
+   on the board to run the application.
+
 Accessing the Docker container from VS Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
