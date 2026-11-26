@@ -146,22 +146,20 @@ Docker Environment Setup
 
    Restart the container first and check whether the auto update worked by using the ``docker logs`` command. If the auto update fails, enter the container and resolve the conflict manually.
 
-Installing the AI Runtime Libraries in the Sysroot
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installing the R-Car V4H AI SDK in the Sysroot
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. important::
 
    **Required to cross-build AI applications.** Applications that use the HyCo TVM runtime or
    ONNX Runtime need these libraries and their headers in the target sysroot. Install the
    ``libv4h-ai-sdk-dev`` package into the ARM64 target sysroot of the container as described
-   below, so that the sysroot matches the package on the board. If the sysroot still has the
-   older ``librcar-xos-v4h-dev`` package, ``libv4h-ai-sdk-dev`` takes over its files.
+   below, so that the sysroot matches the package on the board.
 
 #. Build the package as described in
-   :ref:`Installing the AI Runtime Libraries <sh_ai_runtime_package>`, with Option A on the host
-   PC or Option B on the board. The ``.deb`` file is in the ``~/v4h-ai-deb`` directory. Copy it
-   into your ROS 2 workspace on the host machine (default: ``$HOME/ros2_ws``). The workspace is
-   mounted in the container as ``$ROS2_WS``.
+   :ref:`Installing the R-Car V4H AI SDK <sh_ai_runtime_package>`. The ``.deb`` file is in the
+   ``~/v4h-ai-deb`` directory on the host PC. Copy it into your ROS 2 workspace on the host
+   machine (default: ``$HOME/ros2_ws``). The workspace is mounted in the container as ``$ROS2_WS``.
 
 #. Inside the container, copy the package into the sysroot and install it:
 

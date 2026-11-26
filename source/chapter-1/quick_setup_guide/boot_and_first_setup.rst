@@ -89,8 +89,8 @@ After powering on the board **for the first time**, perform the following steps:
 
 .. _sh_ai_runtime_package:
 
-Installing the AI Runtime Libraries
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installing the R-Car V4H AI SDK
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. important::
 
@@ -99,127 +99,74 @@ Installing the AI Runtime Libraries
    applications and any application that runs a neural network model on the board **do not
    run**. Complete this section before you run or build an AI application.
 
-You build the ``libv4h-ai-sdk-dev`` package yourself from two downloads with the
-``make-v4h-ai-dev-deb.sh`` script, and install it on the board.
+You build the ``libv4h-ai-sdk-dev`` package on a Linux host PC with the
+``make-v4h-ai-dev-deb.sh`` script, and install it on the board. The script downloads ONNX Runtime
+itself, so you only download the AI SDK.
 
-.. note::
-
-   The package does not include the R-Car xOS headers and libraries (``rcar-xos``, ``vsfwk``,
-   ``osal_configuration``, ``lib*.a``).
-
-#. Download the two input files on your host PC:
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 30 35 35
-
-      * - **File**
-        - **Name**
-        - **Where to get it**
-      * - AI SDK for Sparrow Hawk
-        - ``ai_sdk-v*.zip`` (for example ``ai_sdk-v2026-11-05.zip``)
-        - Renesas Secure Portal
-      * - ONNX Runtime for Linux aarch64
-        - ``onnxruntime-linux-aarch64-*.tgz``
-        - `ONNX Runtime v1.17.1 on GitHub <https://github.com/microsoft/onnxruntime/releases/download/v1.17.1/onnxruntime-linux-aarch64-1.17.1.tgz>`_
-
-   Keep the files as they are: do not rename or extract them.
-
-#. Get the build script on your host PC. The script is in the ``ros2_demo_workspace``
-   repository on the Renesas Partner GitLab. Clone the repository and check out the
-   ``feat-librcar-xos-scripts`` branch:
+#. On a Linux host PC, such as Ubuntu 24.04 (x86_64), create a working directory:
 
    .. code-block:: bash
 
-      git clone https://partnergitlab.renesas.solutions/pai/ros2/utility/ros2_demo_workspace.git
-      cd ros2_demo_workspace
-      git checkout feat-librcar-xos-scripts
-
-#. Build the package. Choose **one** of the two options below.
-
-   **Option A: build on the host PC**
-
-   Use a Linux host PC, such as Ubuntu 24.04 (x86_64). The build takes a few seconds. Put the two
-   input files and the script in one directory, for example ``~/v4h-ai-deb``:
-
-   .. code-block:: bash
-
-      sudo apt install unzip
+      sudo apt install curl unzip
       mkdir -p ~/v4h-ai-deb
-      cp <path to ros2_demo_workspace>/common_utils/make-v4h-ai-dev-deb.sh ~/v4h-ai-deb/
       cd ~/v4h-ai-deb
-      ls
 
-   The directory now holds the three files:
+#. Download the R-Car V4H AI SDK for Sparrow Hawk (``ai_sdk-v*.zip``, for example
+   ``ai_sdk-v2026-11-05.zip``) from the Renesas Secure Portal into ``~/v4h-ai-deb``.
+
+   Keep the file as it is: do not rename or extract it.
+
+#. Get the build script. You can find it here:
+   `make-v4h-ai-dev-deb.sh <https://raw.githubusercontent.com/renesas-rdk/ros2_demo_workspace/refs/heads/main/common_utils/make-v4h-ai-dev-deb.sh>`_.
+
+   .. code-block:: bash
+
+      wget https://raw.githubusercontent.com/renesas-rdk/ros2_demo_workspace/refs/heads/main/common_utils/make-v4h-ai-dev-deb.sh
+
+#. Check that the directory holds the two files:
+
+   .. code-block:: bash
+
+      ls
 
    .. code-block:: console
 
-      ai_sdk-v2026-11-05.zip  make-v4h-ai-dev-deb.sh  onnxruntime-linux-aarch64-1.17.1.tgz
+      ai_sdk-v2026-11-05.zip  make-v4h-ai-dev-deb.sh
 
-   Run the script:
+#. Build the package. The host PC needs internet access, because the script downloads ONNX
+   Runtime 1.17.1 for Linux arm64 from the official Microsoft NuGet package:
 
    .. code-block:: bash
 
       bash make-v4h-ai-dev-deb.sh
 
-   Copy the package to the board:
+   The script finds the AI SDK in the current directory and writes the package there:
+
+   .. code-block:: console
+
+      [INFO] input: ai_sdk-v2026-11-05.zip
+      [INFO] downloading ONNX Runtime 1.17.1: https://www.nuget.org/api/v2/package/Microsoft.ML.OnnxRuntime/1.17.1
+      [INFO] built /home/ubuntu/v4h-ai-deb/libv4h-ai-sdk-dev_3.47.0-1_arm64.deb (SDK 3.47.0, TVM 1.0.6, ONNX Runtime 1.17.1)
+      [INFO] on the board: sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
+
+   The version in the package name (``3.47.0``) is the version of the R-Car V4H AI SDK, and ``-1``
+   is the package revision. If the AI SDK file is missing, or more than one file matches, the script names
+   it and stops.
+
+#. Copy the package to the board:
 
    .. code-block:: bash
 
       scp libv4h-ai-sdk-dev_3.47.0-1_arm64.deb ubuntu@<board IP address>:~/
 
-   **Option B: build on the board**
-
-   Use this option if you do not have a Linux host PC. The build takes about 30 seconds. Copy the
-   two input files and the script from the host PC to the board. Run the ``scp`` command in the
-   directory that holds the two input files:
-
-   .. code-block:: bash
-
-      ssh ubuntu@<board IP address> mkdir -p v4h-ai-deb
-      scp ai_sdk-v2026-11-05.zip onnxruntime-linux-aarch64-1.17.1.tgz <path to ros2_demo_workspace>/common_utils/make-v4h-ai-dev-deb.sh ubuntu@<board IP address>:~/v4h-ai-deb/
-
-   Then, on the board, go to the directory:
-
-   .. code-block:: bash
-
-      sudo apt install unzip
-      cd ~/v4h-ai-deb
-      ls
-
-   The directory now holds the three files:
-
-   .. code-block:: console
-
-      ai_sdk-v2026-11-05.zip  make-v4h-ai-dev-deb.sh  onnxruntime-linux-aarch64-1.17.1.tgz
-
-   Run the script:
-
-   .. code-block:: bash
-
-      bash make-v4h-ai-dev-deb.sh
-
-   With either option, the script finds the two files in the current directory and writes the
-   package there:
-
-   .. code-block:: console
-
-      [INFO] inputs: ai_sdk-v2026-11-05.zip, onnxruntime-linux-aarch64-1.17.1.tgz
-      [INFO] built /home/ubuntu/v4h-ai-deb/libv4h-ai-sdk-dev_3.47.0-1_arm64.deb (SDK 3.47.0, TVM 1.0.6, ONNX Runtime 1.17.1)
-      [INFO] on the board: sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
-
-   The version in the package name (``3.47.0``) is the R-Car xOS version of the AI SDK, and
-   ``-1`` is the package revision. If a file is missing, or more than one file matches, the
-   script names it and stops.
-
-#. On the board, go to the directory that holds the package (``~`` for Option A, ``~/v4h-ai-deb``
-   for Option B) and install it:
-
-   .. code-block:: bash
-
-      sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
-
    Use the name of the ``.deb`` file you built.
+
+#. On the board, install the package:
+
+   .. code-block:: bash
+
+      cd ~
+      sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
 
 #. Check that the libraries are installed:
 
@@ -234,11 +181,5 @@ The package installs:
 - ``libtvm_runtime.so`` and ``libonnxruntime.so*`` in ``/usr/lib/aarch64-linux-gnu``
 - the ONNX Runtime headers in ``/usr/include``
 - the license files in ``/usr/share/doc/libv4h-ai-sdk-dev``
-
-.. note::
-
-   If the board has the older ``librcar-xos-v4h-dev`` package, ``libv4h-ai-sdk-dev`` takes over
-   its HyCo TVM runtime and ONNX Runtime files. To reinstall or upgrade the older package, remove
-   ``libv4h-ai-sdk-dev`` first.
 
 This completes the **Quick Start Guide for R-Car V4H SH**.
