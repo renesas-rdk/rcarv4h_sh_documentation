@@ -87,4 +87,99 @@ After powering on the board **for the first time**, perform the following steps:
       echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
       source ~/.bashrc
 
+.. _sh_ai_runtime_package:
+
+Installing the R-Car V4H AI SDK
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. important::
+
+   **Required for all AI applications.** The Ubuntu image does not include the HyCo TVM runtime
+   (``libtvm_runtime.so``) or ONNX Runtime (``libonnxruntime.so``). Without them, the AI sample
+   applications and any application that runs a neural network model on the board **do not
+   run**. Complete this section before you run or build an AI application.
+
+You build the ``libv4h-ai-sdk-dev`` package on a Linux host PC with the
+``make-v4h-ai-dev-deb.sh`` script, and install it on the board. The script downloads ONNX Runtime
+itself, so you only download the AI SDK.
+
+#. On a Linux host PC, such as Ubuntu 24.04 (x86_64), create a working directory:
+
+   .. code-block:: bash
+
+      sudo apt install curl unzip
+      mkdir -p ~/v4h-ai-deb
+      cd ~/v4h-ai-deb
+
+#. Download the R-Car V4H AI SDK for Sparrow Hawk (``ai_sdk-v*.zip``, for example
+   ``ai_sdk-v2026-11-05.zip``) from the Renesas Secure Portal into ``~/v4h-ai-deb``.
+
+   Keep the file as it is: do not rename or extract it.
+
+#. Get the build script. You can find it here:
+   `make-v4h-ai-dev-deb.sh <https://raw.githubusercontent.com/renesas-rdk/ros2_demo_workspace/refs/heads/main/common_utils/make-v4h-ai-dev-deb.sh>`_.
+
+   .. code-block:: bash
+
+      wget https://raw.githubusercontent.com/renesas-rdk/ros2_demo_workspace/refs/heads/main/common_utils/make-v4h-ai-dev-deb.sh
+
+#. Check that the directory holds the two files:
+
+   .. code-block:: bash
+
+      ls
+
+   .. code-block:: console
+
+      ai_sdk-v2026-11-05.zip  make-v4h-ai-dev-deb.sh
+
+#. Build the package. The host PC needs internet access, because the script downloads ONNX
+   Runtime 1.17.1 for Linux arm64 from the official Microsoft NuGet package:
+
+   .. code-block:: bash
+
+      bash make-v4h-ai-dev-deb.sh
+
+   The script finds the AI SDK in the current directory and writes the package there:
+
+   .. code-block:: console
+
+      [INFO] input: ai_sdk-v2026-11-05.zip
+      [INFO] downloading ONNX Runtime 1.17.1: https://www.nuget.org/api/v2/package/Microsoft.ML.OnnxRuntime/1.17.1
+      [INFO] built /home/ubuntu/v4h-ai-deb/libv4h-ai-sdk-dev_3.47.0-1_arm64.deb (SDK 3.47.0, TVM 1.0.6, ONNX Runtime 1.17.1)
+      [INFO] on the board: sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
+
+   The version in the package name (``3.47.0``) is the version of the R-Car V4H AI SDK, and ``-1``
+   is the package revision. If the AI SDK file is missing, or more than one file matches, the script names
+   it and stops.
+
+#. Copy the package to the board:
+
+   .. code-block:: bash
+
+      scp libv4h-ai-sdk-dev_3.47.0-1_arm64.deb ubuntu@<board IP address>:~/
+
+   Use the name of the ``.deb`` file you built.
+
+#. On the board, install the package:
+
+   .. code-block:: bash
+
+      cd ~
+      sudo dpkg -i libv4h-ai-sdk-dev_3.47.0-1_arm64.deb
+
+#. Check that the libraries are installed:
+
+   .. code-block:: bash
+
+      ldconfig -p | grep -E 'libtvm_runtime|libonnxruntime'
+
+   The output lists ``libtvm_runtime.so``, ``libonnxruntime.so`` and ``libonnxruntime.so.1.17.1``.
+
+The package installs:
+
+- ``libtvm_runtime.so`` and ``libonnxruntime.so*`` in ``/usr/lib/aarch64-linux-gnu``
+- the ONNX Runtime headers in ``/usr/include``
+- the license files in ``/usr/share/doc/libv4h-ai-sdk-dev``
+
 This completes the **Quick Start Guide for R-Car V4H SH**.

@@ -32,6 +32,9 @@ with Ubuntu 24.04 and ROS 2 Jazzy running on the R-Car V4H SH:
      - Boot the board for the first time and watch the boot log on the serial console.
    * - :ref:`First Boot and Software Setup <first_time_boot_setup>`
      - Log in, expand the root partition to the full microSD card, and install ROS 2 Jazzy.
+   * - :ref:`Installing the R-Car V4H AI SDK <sh_ai_runtime_package>`
+     - **Required to run AI applications.** Build and install the HyCo TVM runtime and ONNX
+       Runtime package from R-Car V4H AI Software Development Kit (SDK).
 
 The following figure shows the same path, and where each step is carried out:
 
